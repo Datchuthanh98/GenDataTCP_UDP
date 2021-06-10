@@ -13,7 +13,22 @@ import controller.TCPServer;
  */
 public class TCPServerView {
     public static void main(String[] args) {
-         TCPServer server = new TCPServer();
-        System.out.println("Server TCP is running");  
+        try {
+
+        new Thread(new Runnable() {
+            public void run() {
+                TCPServer server1 = new TCPServer(11000,1);
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            public void run() {
+                TCPServer server2 = new TCPServer(11001,2);
+
+            }
+        }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -20,7 +20,7 @@ public class TCPCLient {
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
     public TCPCLient(InetAddress IP, int port){
-        System.out.println("ClientController()");
+        System.out.println("Clien TCP with"+port+ "is running");
         try{
             socket = new Socket(IP, port);
             System.out.println("Socket: "+IP.getHostAddress()+":"+port);

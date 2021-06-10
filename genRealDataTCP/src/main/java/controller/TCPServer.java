@@ -30,12 +30,12 @@ public class TCPServer {
     private ObjectOutputStream oos;
 
 
-    public TCPServer() {
+    public TCPServer(int port ,int option ) {
         try {
-            serverSocket = new ServerSocket(11003);
-            System.out.println("Server TCP is running...");
+            serverSocket = new ServerSocket(port);
+            System.out.println("Server TCP with port : "+port+" is running...");
             while (true) {
-                listening();
+                listening(option);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,7 +44,7 @@ public class TCPServer {
 
 
 
-    private void listening() {
+    private void listening(final int option) {
         try {
             clientSocket = serverSocket.accept();
             System.out.println(clientSocket.getInetAddress());
@@ -54,7 +54,12 @@ public class TCPServer {
                 public void run() {
                     try {
                         while (true) {
-                            oos.writeObject(TCPServer.this.genData2());
+                            if(option == 1){
+                                oos.writeObject(TCPServer.this.genData1());
+                            }else{
+                                oos.writeObject(TCPServer.this.genData2());
+                            }
+
 
 
                             Thread.sleep(200);
@@ -127,7 +132,7 @@ public class TCPServer {
         clientSocket.close();
     }
 
-    public static void main(String[] args) {
-        new TCPServer();
-    }
+//    public static void main(String[] args) {
+//        new TCPServer();
+//    }
 }
