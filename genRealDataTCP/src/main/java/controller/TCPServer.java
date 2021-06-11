@@ -28,7 +28,7 @@ public class TCPServer {
     private Socket clientSocket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
-
+    public static String ipPrivateMatching = "10.100.14.16";
 
     public TCPServer(int port ,int option ) {
         try {
@@ -55,14 +55,41 @@ public class TCPServer {
                     try {
                         while (true) {
                             if(option == 1){
-                                oos.writeObject(TCPServer.this.genData1());
+                                oos.writeObject(TCPServer.this.genDataFakeFile1());
                             }else{
-                                oos.writeObject(TCPServer.this.genData2());
+                                oos.writeObject(TCPServer.this.genDataFakeFile2());
                             }
+                            Thread.sleep(100);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
 
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        while (true) {
+                            if(option == 1){
+                                oos.writeObject(TCPServer.this.genDataMatchFile1());
+                            }else{
+                                oos.writeObject(TCPServer.this.genDataMatchFile2());
+                            }
+                            Thread.sleep(1000);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
 
-
-                            Thread.sleep(200);
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        while (true) {
+                            resetIpPrivateMatching();
+                            Thread.sleep(2000);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -74,11 +101,64 @@ public class TCPServer {
             e.printStackTrace();
         }
 
+
+    }
+
+    public void resetIpPrivateMatching() {
+        MockNeat mock = MockNeat.threadLocal();
+        ipPrivateMatching = mock.ipv4s().val();
     }
 
 
 
-    public String genData1() {
+
+    public String genDataFakeFile1(){
+        String data = "";
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+        String strDate = dateFormat.format(date);
+        data += strDate+"|RadiusMessage";
+
+        if(Math.random() < 0.5) {
+            data+= "|Start";
+        }else{
+            data+= "|Stop";
+        }
+
+        Random rand = new Random();
+        String phone ="84";
+        for(int i =0 ;i < 9;i++ ){
+            phone += rand.nextInt(10);
+        }
+
+        data+="|"+phone;
+
+        MockNeat mock = MockNeat.threadLocal();
+
+        String ipv4 = mock.ipv4s().val();
+        data+="|"+ipv4;
+        return data;
+    }
+
+
+    public String genDataFakeFile2() {
+        String data = "NVL01_1";
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+        String strDate = dateFormat.format(date);
+        data += ","+strDate;
+
+        MockNeat mock = MockNeat.threadLocal();
+        Random rand = new Random();
+        for(int i =0 ;i <3 ;i++){
+            String ipv4 = mock.ipv4s().val();
+            data+=","+ipv4;
+            data+=","+rand.nextInt(10000);
+        }
+        return data;
+    }
+
+    public String genDataMatchFile1() {
         String data = "";
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
@@ -98,41 +178,36 @@ public class TCPServer {
         }
         System.out.println(phone);
         data+="|"+phone;
-
-        MockNeat mock = MockNeat.threadLocal();
-
-        String ipv4 = mock.ipv4s().val();
-        data+="|"+ipv4;
-
-
+        data+="|"+ipPrivateMatching;
+        data = "Match1:         "+data;
         return data;
     }
 
-    public String genData2() {
+    public String genDataMatchFile2() {
         String data = "NVL01_1";
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         String strDate = dateFormat.format(date);
         data += ","+strDate;
+        Random rand = new Random();
+
+        data+=","+ipPrivateMatching;
+        data+=","+rand.nextInt(10000);
 
         MockNeat mock = MockNeat.threadLocal();
-        Random rand = new Random();
-        for(int i =0 ;i <3 ;i++){
+
+        for(int i =0 ;i <2 ;i++){
             String ipv4 = mock.ipv4s().val();
             data+=","+ipv4;
             data+=","+rand.nextInt(10000);
         }
-
+        data = "Match2:         "+data;
         return data;
     }
-
 
 
     private void commandClose() throws IOException, ClassNotFoundException {
         clientSocket.close();
     }
 
-//    public static void main(String[] args) {
-//        new TCPServer();
-//    }
 }
