@@ -1,4 +1,4 @@
-package view;
+package test;
 
 import net.andreinc.mockneat.MockNeat;
 import net.andreinc.mockneat.types.enums.IPv4Type;
@@ -8,7 +8,7 @@ import java.util.Random;
 
 import static net.andreinc.mockneat.types.enums.IPv4Type.CLASS_A;
 
-public class testGen {
+public class testGenIP {
 
 
     public static void main(String[] args) {

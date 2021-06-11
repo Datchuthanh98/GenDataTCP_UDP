@@ -3,27 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package view;
+package test;
 
-import controller.TCPServer;
+import main.TCPServerController;
 
 /**
  *
  * @author dat.chuthanh
  */
-public class TCPServerView {
+public class TCPServerViewM {
     public static void main(String[] args) {
         try {
 
         new Thread(new Runnable() {
             public void run() {
-                TCPServer server1 = new TCPServer(11000,1);
+                TCPServerController server1 = new TCPServerController(11000,1);
             }
         }).start();
 
         new Thread(new Runnable() {
             public void run() {
-                TCPServer server2 = new TCPServer(11001,2);
+                TCPServerController server2 = new TCPServerController(11001,2);
 
             }
         }).start();

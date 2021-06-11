@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package controller;
+package test;
 
 import net.andreinc.mockneat.MockNeat;
 
@@ -22,15 +22,15 @@ import java.util.Random;
  *
  * @author Ryan
  */
-public class TCPServer {
+public class TCPServerControllerM {
 
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
-    public static String ipPrivateMatching = "10.100.14.16";
 
-    public TCPServer(int port ,int option ) {
+
+    public TCPServerControllerM(int port , int option ) {
         try {
             serverSocket = new ServerSocket(port);
             System.out.println("Server TCP with port : "+port+" is running...");
@@ -55,41 +55,15 @@ public class TCPServer {
                     try {
                         while (true) {
                             if(option == 1){
-                                oos.writeObject(TCPServer.this.genDataFakeFile1());
+                                oos.writeObject(TCPServerControllerM.this.genData1());
+                                Thread.sleep(200);
                             }else{
-                                oos.writeObject(TCPServer.this.genDataFakeFile2());
+                                oos.writeObject(TCPServerControllerM.this.genData2());
+                                Thread.sleep(1000);
                             }
-                            Thread.sleep(100);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
 
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        while (true) {
-                            if(option == 1){
-                                oos.writeObject(TCPServer.this.genDataMatchFile1());
-                            }else{
-                                oos.writeObject(TCPServer.this.genDataMatchFile2());
-                            }
-                            Thread.sleep(1000);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
 
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        while (true) {
-                            resetIpPrivateMatching();
-                            Thread.sleep(2000);
+
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -101,64 +75,11 @@ public class TCPServer {
             e.printStackTrace();
         }
 
-
-    }
-
-    public void resetIpPrivateMatching() {
-        MockNeat mock = MockNeat.threadLocal();
-        ipPrivateMatching = mock.ipv4s().val();
     }
 
 
 
-
-    public String genDataFakeFile1(){
-        String data = "";
-        Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
-        String strDate = dateFormat.format(date);
-        data += strDate+"|RadiusMessage";
-
-        if(Math.random() < 0.5) {
-            data+= "|Start";
-        }else{
-            data+= "|Stop";
-        }
-
-        Random rand = new Random();
-        String phone ="84";
-        for(int i =0 ;i < 9;i++ ){
-            phone += rand.nextInt(10);
-        }
-
-        data+="|"+phone;
-
-        MockNeat mock = MockNeat.threadLocal();
-
-        String ipv4 = mock.ipv4s().val();
-        data+="|"+ipv4;
-        return data;
-    }
-
-
-    public String genDataFakeFile2() {
-        String data = "NVL01_1";
-        Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
-        String strDate = dateFormat.format(date);
-        data += ","+strDate;
-
-        MockNeat mock = MockNeat.threadLocal();
-        Random rand = new Random();
-        for(int i =0 ;i <3 ;i++){
-            String ipv4 = mock.ipv4s().val();
-            data+=","+ipv4;
-            data+=","+rand.nextInt(10000);
-        }
-        return data;
-    }
-
-    public String genDataMatchFile1() {
+    public String genData1() {
         String data = "";
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
@@ -178,36 +99,41 @@ public class TCPServer {
         }
         System.out.println(phone);
         data+="|"+phone;
-        data+="|"+ipPrivateMatching;
-        data = "Match1:         "+data;
+
+        MockNeat mock = MockNeat.threadLocal();
+
+        String ipv4 = mock.ipv4s().val();
+        data+="|"+ipv4;
+
+
         return data;
     }
 
-    public String genDataMatchFile2() {
+    public String genData2() {
         String data = "NVL01_1";
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         String strDate = dateFormat.format(date);
         data += ","+strDate;
-        Random rand = new Random();
-
-        data+=","+ipPrivateMatching;
-        data+=","+rand.nextInt(10000);
 
         MockNeat mock = MockNeat.threadLocal();
-
-        for(int i =0 ;i <2 ;i++){
+        Random rand = new Random();
+        for(int i =0 ;i <3 ;i++){
             String ipv4 = mock.ipv4s().val();
             data+=","+ipv4;
             data+=","+rand.nextInt(10000);
         }
-        data = "Match2:         "+data;
+
         return data;
     }
+
 
 
     private void commandClose() throws IOException, ClassNotFoundException {
         clientSocket.close();
     }
 
+//    public static void main(String[] args) {
+//        new TCPServer();
+//    }
 }

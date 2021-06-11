@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package controller;
+package main;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,11 +15,11 @@ import java.net.Socket;
  *
  * @author Ryan
  */
-public class TCPCLient {
+public class TCPCLientController {
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
-    public TCPCLient(InetAddress IP, int port){
+    public TCPCLientController(InetAddress IP, int port){
         System.out.println("Clien TCP with"+port+ "is running");
         try{
             socket = new Socket(IP, port);
