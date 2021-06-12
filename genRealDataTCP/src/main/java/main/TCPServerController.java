@@ -17,23 +17,22 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- *
  * @author Ryan
  */
 public class TCPServerController {
 
     private ServerSocket serverSocket;
     private Socket clientSocket;
-    private ObjectInputStream ois;
-    private ObjectOutputStream oos;
     public static String ipPrivateMatching = "10.100.14.16";
+    private volatile AtomicBoolean lock = new AtomicBoolean(false);
 
-    public TCPServerController(int port , int option ) {
+    public TCPServerController(int port, int option) {
         try {
             serverSocket = new ServerSocket(port);
-            System.out.println("Server TCP with port : "+port+" is running...");
+            System.out.println("Server TCP with port : " + port + " is running...");
             while (true) {
                 listening(option);
             }
@@ -43,22 +42,24 @@ public class TCPServerController {
     }
 
 
-
     private void listening(final int option) {
         try {
             clientSocket = serverSocket.accept();
             System.out.println(clientSocket.getInetAddress());
             final ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
+
             new Thread(new Runnable() {
                 public void run() {
                     try {
                         while (true) {
-                            if(option == 1){
-                                oos.writeObject(TCPServerController.this.genDataFakeFile1());
-                            }else{
-                                oos.writeObject(TCPServerController.this.genDataFakeFile2());
+                            while (lock.getAndSet(true));
+                            if (option == 1) {
+                                oos.writeUTF(genDataFakeFile1());
+                            } else {
+                                oos.writeUTF(genDataFakeFile2());
                             }
+                            lock.set(false);
                             Thread.sleep(1);
                         }
                     } catch (Exception e) {
@@ -71,11 +72,13 @@ public class TCPServerController {
                 public void run() {
                     try {
                         while (true) {
-                            if(option == 1){
-                                oos.writeObject(TCPServerController.this.genDataMatchFile1());
-                            }else{
-                                oos.writeObject(TCPServerController.this.genDataMatchFile2());
+                            while (lock.getAndSet(true));
+                            if (option == 1) {
+                                oos.writeUTF(genDataMatchFile1());
+                            } else {
+                                oos.writeUTF(genDataMatchFile2());
                             }
+                            lock.set(false);
                             Thread.sleep(1000);
                         }
                     } catch (Exception e) {
@@ -96,7 +99,7 @@ public class TCPServerController {
                     }
                 }
             }).start();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -110,33 +113,31 @@ public class TCPServerController {
     }
 
 
-
-
-    public String genDataFakeFile1(){
+    public String genDataFakeFile1() {
         String data = "";
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         String strDate = dateFormat.format(date);
-        data += strDate+"|RadiusMessage";
+        data += strDate + "|RadiusMessage";
 
-        if(Math.random() < 0.5) {
-            data+= "|Start";
-        }else{
-            data+= "|Stop";
+        if (Math.random() < 0.5) {
+            data += "|Start";
+        } else {
+            data += "|Stop";
         }
 
         Random rand = new Random();
-        String phone ="84";
-        for(int i =0 ;i < 9;i++ ){
+        String phone = "84";
+        for (int i = 0; i < 9; i++) {
             phone += rand.nextInt(10);
         }
 
-        data+="|"+phone;
+        data += "|" + phone;
 
         MockNeat mock = MockNeat.threadLocal();
 
         String ipv4 = mock.ipv4s().val();
-        data+="|"+ipv4;
+        data += "|" + ipv4;
         return data;
     }
 
@@ -146,14 +147,14 @@ public class TCPServerController {
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         String strDate = dateFormat.format(date);
-        data += ","+strDate;
+        data += "," + strDate;
 
         MockNeat mock = MockNeat.threadLocal();
         Random rand = new Random();
-        for(int i =0 ;i <3 ;i++){
+        for (int i = 0; i < 3; i++) {
             String ipv4 = mock.ipv4s().val();
-            data+=","+ipv4;
-            data+=","+rand.nextInt(10000);
+            data += "," + ipv4;
+            data += "," + rand.nextInt(10000);
         }
         return data;
     }
@@ -163,22 +164,22 @@ public class TCPServerController {
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         String strDate = dateFormat.format(date);
-        data += strDate+"|RadiusMessage";
+        data += strDate + "|RadiusMessage";
 
-        if(Math.random() < 0.5) {
-            data+= "|Start";
-        }else{
-            data+= "|Stop";
+        if (Math.random() < 0.5) {
+            data += "|Start";
+        } else {
+            data += "|Stop";
         }
 
         Random rand = new Random();
-        String phone ="84";
-        for(int i =0 ;i < 9;i++ ){
+        String phone = "84";
+        for (int i = 0; i < 9; i++) {
             phone += rand.nextInt(10);
         }
         System.out.println(phone);
-        data+="|"+phone;
-        data+="|"+ipPrivateMatching;
+        data += "|" + phone;
+        data += "|" + ipPrivateMatching;
 //        data = "Match1    "+data;
         return data;
     }
@@ -188,18 +189,18 @@ public class TCPServerController {
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         String strDate = dateFormat.format(date);
-        data += ","+strDate;
+        data += "," + strDate;
         Random rand = new Random();
 
-        data+=","+ipPrivateMatching;
-        data+=","+rand.nextInt(10000);
+        data += "," + ipPrivateMatching;
+        data += "," + rand.nextInt(10000);
 
         MockNeat mock = MockNeat.threadLocal();
 
-        for(int i =0 ;i <2 ;i++){
+        for (int i = 0; i < 2; i++) {
             String ipv4 = mock.ipv4s().val();
-            data+=","+ipv4;
-            data+=","+rand.nextInt(10000);
+            data += "," + ipv4;
+            data += "," + rand.nextInt(10000);
         }
 //        data = "Match2    "+data;
         return data;

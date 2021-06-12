@@ -38,8 +38,8 @@ public class TCPCLientController {
         }
     }
     
-    public String readData() throws IOException, ClassNotFoundException{
-        return (String)ois.readObject();
+    public String readData() throws IOException {
+        return ois.readUTF();
     }
     
 

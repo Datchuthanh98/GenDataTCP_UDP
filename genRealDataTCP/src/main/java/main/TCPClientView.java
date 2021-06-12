@@ -26,43 +26,43 @@ public class TCPClientView {
 
             // read data from server 1
             new Thread(() -> {
-                while (true) {
-                    try {
+                try {
+                    while (true) {
                         String data = clientController1.readData();
                         // add to queue
                         queue.add(data);
 //                        System.out.println(data);
                         numMessOnSecond++;
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }).start();
 
             // read data from server 2
             new Thread(() -> {
-                while (true) {
-                    try {
+                try {
+                    while (true) {
                         String data = clientController2.readData();
                         // add to queue
                         queue.add(data);
 //                        System.out.println(data);
                         numMessOnSecond++;
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }).start();
 
             new Thread(() -> {
-                while (true) {
-                    try {
+                try {
+                    while (true) {
                         System.out.println("numMessOnSecond : " + numMessOnSecond);
                         numMessOnSecond = 0;
                         Thread.sleep(1000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }).start();
 
@@ -134,7 +134,7 @@ public class TCPClientView {
 
     static class Node {
         String data;
-//        String phone;
+        //        String phone;
         Node[] next = new Node[256];
     }
 }
