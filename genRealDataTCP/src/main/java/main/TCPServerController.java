@@ -55,9 +55,9 @@ public class TCPServerController {
                         while (true) {
                             while (lock.getAndSet(true));
                             if (option == 1) {
-                                oos.writeUTF(genDataFakeFile1());
+                                oos.writeObject(genDataFakeFile1());
                             } else {
-                                oos.writeUTF(genDataFakeFile2());
+                                oos.writeObject(genDataFakeFile2());
                             }
                             lock.set(false);
                             Thread.sleep(1);
@@ -74,9 +74,9 @@ public class TCPServerController {
                         while (true) {
                             while (lock.getAndSet(true));
                             if (option == 1) {
-                                oos.writeUTF(genDataMatchFile1());
+                                oos.writeObject(genDataMatchFile1());
                             } else {
-                                oos.writeUTF(genDataMatchFile2());
+                                oos.writeObject(genDataMatchFile2());
                             }
                             lock.set(false);
                             Thread.sleep(500);
