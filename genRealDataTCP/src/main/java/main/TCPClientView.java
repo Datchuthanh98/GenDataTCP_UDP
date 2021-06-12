@@ -1,12 +1,16 @@
 package main;
 
+import redis.MsgQueueRedis;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class TCPClientView {
-    public static Integer numMessOnSecond = 0;
-    public static Node root = new Node();
+    private static Integer numMessOnSecond = 0;
+    private static Node root = new Node();
+    private static MsgQueueRedis msgQueueRedis = new MsgQueueRedis("Matching");
+    public static Integer numMatching= 0;
     // priority queue with blocking for thread-safe process
     public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<>(1000000, (s1, s2) -> {
         // comparator so that element go in the queue will be sorted
@@ -93,6 +97,9 @@ public class TCPClientView {
                                 // found
                                 // insert to db
                                 System.out.println(data + " " + curr.data);
+                                msgQueueRedis.add(data + " " + curr.data);
+                                numMatching++;
+                                System.out.println("numMatching " +numMatching);
                             }
                         } else {
                             // server 1

@@ -1,6 +1,6 @@
-package redis;
+package test;
 
-import redis.clients.jedis.Jedis;
+import redis.MsgQueueRedis;
 
 public class ThreadWriteRedis extends Thread{
 
@@ -12,17 +12,13 @@ public class ThreadWriteRedis extends Thread{
 
     @Override
     public void run(){
-
-
-
-        int i = 1;
+        int i = 0;
 
         while (true){
-
+            i++;
             String mes = "redis : " + i;
             msgQueueRedis.add(mes);
-            i++;
-
+            System.out.println("mes : " + mes);
         }
 
     }

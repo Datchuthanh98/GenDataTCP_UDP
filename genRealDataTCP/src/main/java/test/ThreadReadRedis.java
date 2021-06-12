@@ -1,6 +1,6 @@
-package redis;
+package test;
 
-import redis.clients.jedis.Jedis;
+import redis.MsgQueueRedis;
 
 public class ThreadReadRedis extends Thread{
 
@@ -12,12 +12,10 @@ public class ThreadReadRedis extends Thread{
 
     @Override
     public void run(){
-
         while (true){
-
           String mes =    msgQueueRedis.pollString();
-
-            System.out.println("read : " + mes);
+          if (mes != null)
+              System.out.println("read : " + mes);
         }
 
     }

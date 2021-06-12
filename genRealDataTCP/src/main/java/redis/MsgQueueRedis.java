@@ -1,6 +1,8 @@
 package redis;
 
 import java.util.Calendar;
+
+import redis.JedisFactory;
 import redis.clients.jedis.Jedis;
 
 
@@ -12,7 +14,6 @@ public class MsgQueueRedis
     Jedis jedis;
     
     public MsgQueueRedis() {
-
         this.jedis = JedisFactory.getInstance().getJedisPool().getResource();
         if (this.jedis == null) {
             this.jedis = JedisFactory.getInstance().getJedisPool().getResource();
@@ -20,7 +21,6 @@ public class MsgQueueRedis
     }
     
     public MsgQueueRedis(final String queueName) {
-
         this.jedis = JedisFactory.getInstance().getJedisPool().getResource();
         this.queueName = queueName;
     }

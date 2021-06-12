@@ -79,7 +79,7 @@ public class TCPServerController {
                                 oos.writeUTF(genDataMatchFile2());
                             }
                             lock.set(false);
-                            Thread.sleep(1000);
+                            Thread.sleep(500);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -92,7 +92,7 @@ public class TCPServerController {
                     try {
                         while (true) {
                             resetIpPrivateMatching();
-                            Thread.sleep(2000);
+                            Thread.sleep(500);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
