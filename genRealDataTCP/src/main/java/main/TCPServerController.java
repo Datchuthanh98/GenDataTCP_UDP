@@ -59,7 +59,7 @@ public class TCPServerController {
                             }else{
                                 oos.writeObject(TCPServerController.this.genDataFakeFile2());
                             }
-                            Thread.sleep(1);
+//                            Thread.sleep(1);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -179,7 +179,7 @@ public class TCPServerController {
         System.out.println(phone);
         data+="|"+phone;
         data+="|"+ipPrivateMatching;
-        data = "Match1    "+data;
+//        data = "Match1    "+data;
         return data;
     }
 
@@ -201,7 +201,7 @@ public class TCPServerController {
             data+=","+ipv4;
             data+=","+rand.nextInt(10000);
         }
-        data = "Match2    "+data;
+//        data = "Match2    "+data;
         return data;
     }
 

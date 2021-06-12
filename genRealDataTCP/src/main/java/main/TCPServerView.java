@@ -13,17 +13,13 @@ public class TCPServerView {
     public static void main(String[] args) {
         try {
 
-        new Thread(new Runnable() {
-            public void run() {
-                TCPServerController server1 = new TCPServerController(11000,1);
-            }
+        new Thread(() -> {
+            TCPServerController server1 = new TCPServerController(11000,1);
         }).start();
 
-        new Thread(new Runnable() {
-            public void run() {
-                TCPServerController server2 = new TCPServerController(11001,2);
+        new Thread(() -> {
+            TCPServerController server2 = new TCPServerController(11001,2);
 
-            }
         }).start();
         } catch (Exception e) {
             e.printStackTrace();

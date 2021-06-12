@@ -11,8 +11,11 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="demoTCP" target="1.5" />
-      <module name="genRealDataUDP" target="1.5" />
+      <module name="demoTCP" target="8" />
+      <module name="genRealDataUDP" target="8" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="PREFER_TARGET_JDK_COMPILER" value="false" />
   </component>
 </project>
