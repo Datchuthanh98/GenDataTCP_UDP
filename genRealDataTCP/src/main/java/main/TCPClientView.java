@@ -81,7 +81,7 @@ public class TCPClientView {
                             // search on trie
                             Node curr = root;
                             String[] dataArr = data.split(",");
-                            String publicIp = dataArr[4];
+//                            String publicIp = dataArr[4];
                             String privateIp = dataArr[2];
                             String[] ipArr = privateIp.split("\\.");
                             for (int i = 0; i < 4; i++) {
@@ -89,16 +89,17 @@ public class TCPClientView {
                                 if (curr.next[tmp] == null) break;
                                 curr = curr.next[tmp];
                             }
-                            if (curr.phone != null) {
+                            if (curr.data != null) {
                                 // found
-                                System.out.println(publicIp + " " + curr.phone);
+                                // insert to db
+                                System.out.println(data + " " + curr.data);
                             }
                         } else {
                             // server 1
                             // add to trie
                             Node curr = root;
                             String[] dataArr = data.split("\\|");
-                            String phone = dataArr[3];
+//                            String phone = dataArr[3];
                             String ip = dataArr[4];
                             String[] ipArr = ip.split("\\.");
                             for (int i = 0; i < 4; i++) {
@@ -106,7 +107,8 @@ public class TCPClientView {
                                 if (curr.next[tmp] == null) curr.next[tmp] = new Node();
                                 curr = curr.next[tmp];
                             }
-                            curr.phone = phone;
+//                            curr.phone = phone;
+                            curr.data = data;
                         }
 
                         // calculation per second
@@ -131,7 +133,8 @@ public class TCPClientView {
     }
 
     static class Node {
-        String phone;
+        String data;
+//        String phone;
         Node[] next = new Node[256];
     }
 }
