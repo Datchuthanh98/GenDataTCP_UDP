@@ -5,9 +5,12 @@ import redis.MsgQueueRedis;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TCPClientView {
-    private static Integer numMessOnSecond = 0;
+
+    private static volatile AtomicInteger numMessOnSecond = new AtomicInteger(0);
 
     public static void main(String[] args) throws UnknownHostException {
         try {
@@ -20,7 +23,7 @@ public class TCPClientView {
                     while (true) {
                         String data = clientController1.readData();
                         System.out.println(data);
-                        numMessOnSecond++;
+                        numMessOnSecond.getAndIncrement();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -33,7 +36,7 @@ public class TCPClientView {
                     while (true) {
                         String data = clientController2.readData();
                         System.out.println(data);
-                        numMessOnSecond++;
+                        numMessOnSecond.getAndIncrement();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -44,7 +47,7 @@ public class TCPClientView {
                 try {
                     while (true) {
                         System.out.println("numMessOnSecond : " + numMessOnSecond);
-                        numMessOnSecond = 0;
+                        numMessOnSecond.set(0);
                         Thread.sleep(1000);
                     }
                 } catch (Exception e) {
