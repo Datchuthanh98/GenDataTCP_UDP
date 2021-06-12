@@ -11,37 +11,16 @@ public class TCPClientView {
 
     public static void main(String[] args) throws UnknownHostException {
 
-        final Jedis jedis = JedisFactory.getInstance().getJedisPool().getResource();
-        System.out.println(jedis.ping());
-
-
        try {
             final TCPCLientController clientController1 = new TCPCLientController(InetAddress.getByName("localhost"), 11000);
             final TCPCLientController clientController2 = new TCPCLientController(InetAddress.getByName("localhost"), 11001);
-//            new Thread(new Runnable() {
-//                public void run() {
-//                    try {
-//                        while (true) {
-//                           String data= clientController1.readData();
-//                            System.out.println(data);
-//                            numMessOnSecond++;
-////                            System.out.println("numMessOnSecond "+numMessOnSecond);
-//                        }
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }).start();
-
             new Thread(new Runnable() {
                 public void run() {
                     try {
                         while (true) {
-                            String data = clientController2.readData();
-//                            jedis.rpush("chudat",data);
+                           String data= clientController1.readData();
 //                            System.out.println(data);
-//                            numMessOnSecond++;
-//                            System.out.println("numMessOnSecond "+numMessOnSecond);
+                            numMessOnSecond++;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -49,19 +28,33 @@ public class TCPClientView {
                 }
             }).start();
 
-//            new Thread(new Runnable() {
-//                public void run() {
-//                    try {
-//                        while (true) {
-////                            System.out.println("numMessOnSecond : "+ numMessOnSecond);
-//                            numMessOnSecond = 0;
-//                            Thread.sleep(100);
-//                        }
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }).start();
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        while (true) {
+                            String data = clientController2.readData();
+                            numMessOnSecond++;
+//                            System.out.println(data);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        while (true) {
+                            System.out.println("numMessOnSecond : "+ numMessOnSecond);
+                            numMessOnSecond = 0;
+                            Thread.sleep(1000);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
 
 
         } catch (Exception e) {

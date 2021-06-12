@@ -59,7 +59,7 @@ public class TCPServerController {
                             }else{
                                 oos.writeObject(TCPServerController.this.genDataFakeFile2());
                             }
-                            Thread.sleep(2000);
+                            Thread.sleep(1);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -67,35 +67,35 @@ public class TCPServerController {
                 }
             }).start();
 
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        while (true) {
-                            if(option == 1){
-                                oos.writeObject(TCPServerController.this.genDataMatchFile1());
-                            }else{
-                                oos.writeObject(TCPServerController.this.genDataMatchFile2());
-                            }
-                            Thread.sleep(1000);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        while (true) {
-                            resetIpPrivateMatching();
-                            Thread.sleep(2000);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+//            new Thread(new Runnable() {
+//                public void run() {
+//                    try {
+//                        while (true) {
+//                            if(option == 1){
+//                                oos.writeObject(TCPServerController.this.genDataMatchFile1());
+//                            }else{
+//                                oos.writeObject(TCPServerController.this.genDataMatchFile2());
+//                            }
+//                            Thread.sleep(1000);
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }).start();
+//
+//            new Thread(new Runnable() {
+//                public void run() {
+//                    try {
+//                        while (true) {
+//                            resetIpPrivateMatching();
+//                            Thread.sleep(2000);
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }).start();
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -179,7 +179,7 @@ public class TCPServerController {
         System.out.println(phone);
         data+="|"+phone;
         data+="|"+ipPrivateMatching;
-        data = data;
+        data = "Match1    "+data;
         return data;
     }
 
@@ -201,7 +201,7 @@ public class TCPServerController {
             data+=","+ipv4;
             data+=","+rand.nextInt(10000);
         }
-        data = data;
+        data = "Match2    "+data;
         return data;
     }
 
