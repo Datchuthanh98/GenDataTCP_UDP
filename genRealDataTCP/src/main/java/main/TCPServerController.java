@@ -59,7 +59,7 @@ public class TCPServerController {
                             }else{
                                 oos.writeObject(TCPServerController.this.genDataFakeFile2());
                             }
-//                            Thread.sleep(1);
+                            Thread.sleep(1);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

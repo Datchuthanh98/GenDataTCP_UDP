@@ -1,76 +1,79 @@
 package main;
 
-import redis.JedisFactory;
-import redis.clients.jedis.Jedis;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Comparator;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
 
 public class TCPClientView {
     public static Integer numMessOnSecond = 0;
+    public static Node root = new Node();
+    // priority queue with blocking for thread-safe process
     public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<>(1000000, (s1, s2) -> {
+        // comparator so that element go in the queue will be sorted
         for (int i = 0; i < 14; i++) {
             if (s1.charAt(i) < s2.charAt(i + 8)) return -1;
             else if (s1.charAt(i) > s2.charAt(i)) return 1;
         }
+        if (s1.startsWith("NVL01")) return 1;
+        else if (s2.startsWith("NVL01")) return -1;
         return 0;
     });
-    public static Node root = new Node();
 
     public static void main(String[] args) throws UnknownHostException {
-
         try {
             final TCPCLientController clientController1 = new TCPCLientController(InetAddress.getByName("localhost"), 11000);
             final TCPCLientController clientController2 = new TCPCLientController(InetAddress.getByName("localhost"), 11001);
 
             // read data from server 1
             new Thread(() -> {
-                try {
-                    while (true) {
+                while (true) {
+                    try {
                         String data = clientController1.readData();
+                        // add to queue
                         queue.add(data);
+//                        System.out.println(data);
                         numMessOnSecond++;
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }).start();
 
             // read data from server 2
             new Thread(() -> {
-                try {
-                    while (true) {
+                while (true) {
+                    try {
                         String data = clientController2.readData();
+                        // add to queue
                         queue.add(data);
+//                        System.out.println(data);
                         numMessOnSecond++;
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }).start();
 
             new Thread(() -> {
-                try {
-                    while (true) {
+                while (true) {
+                    try {
                         System.out.println("numMessOnSecond : " + numMessOnSecond);
                         numMessOnSecond = 0;
                         Thread.sleep(1000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }).start();
 
             new Thread(() -> {
                 try {
+                    // startTime and count for calculation per second
                     long startTime = System.currentTimeMillis();
                     int count = 0;
+
                     while (true) {
+                        // get data from queue if queue is not empty
                         String data = queue.poll();
                         if (data == null) continue;
                         if (data.startsWith("NVL01")) {
@@ -105,10 +108,13 @@ public class TCPClientView {
                             }
                             curr.phone = phone;
                         }
+
+                        // calculation per second
                         count++;
                         long currTime = System.currentTimeMillis();
                         if (currTime - startTime >= 1000) {
                             System.out.println("Processed " + count + " in 1s");
+                            System.out.println("Left in queue: " + queue.size());
                             count = 0;
                             startTime = currTime;
                         }
