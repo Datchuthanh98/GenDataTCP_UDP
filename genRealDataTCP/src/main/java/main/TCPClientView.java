@@ -19,7 +19,7 @@ public class TCPClientView {
                     try {
                         while (true) {
                            String data= clientController1.readData();
-//                            System.out.println(data);
+                            if (data.startsWith("Match")) System.out.println(data);
                             numMessOnSecond++;
                         }
                     } catch (Exception e) {
@@ -34,7 +34,7 @@ public class TCPClientView {
                         while (true) {
                             String data = clientController2.readData();
                             numMessOnSecond++;
-//                            System.out.println(data);
+                            if (data.startsWith("Match")) System.out.println(data);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

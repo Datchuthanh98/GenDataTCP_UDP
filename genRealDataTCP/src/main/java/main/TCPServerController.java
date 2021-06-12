@@ -67,35 +67,35 @@ public class TCPServerController {
                 }
             }).start();
 
-//            new Thread(new Runnable() {
-//                public void run() {
-//                    try {
-//                        while (true) {
-//                            if(option == 1){
-//                                oos.writeObject(TCPServerController.this.genDataMatchFile1());
-//                            }else{
-//                                oos.writeObject(TCPServerController.this.genDataMatchFile2());
-//                            }
-//                            Thread.sleep(1000);
-//                        }
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }).start();
-//
-//            new Thread(new Runnable() {
-//                public void run() {
-//                    try {
-//                        while (true) {
-//                            resetIpPrivateMatching();
-//                            Thread.sleep(2000);
-//                        }
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }).start();
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        while (true) {
+                            if(option == 1){
+                                oos.writeObject(TCPServerController.this.genDataMatchFile1());
+                            }else{
+                                oos.writeObject(TCPServerController.this.genDataMatchFile2());
+                            }
+                            Thread.sleep(1000);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        while (true) {
+                            resetIpPrivateMatching();
+                            Thread.sleep(2000);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
             
         } catch (Exception e) {
             e.printStackTrace();
