@@ -177,10 +177,8 @@ public class TCPServerController {
         for (int i = 0; i < 9; i++) {
             phone += rand.nextInt(10);
         }
-        System.out.println(phone);
         data += "|" + phone;
         data += "|" + ipPrivateMatching;
-//        data = "Match1    "+data;
         return data;
     }
 
@@ -202,7 +200,6 @@ public class TCPServerController {
             data += "," + ipv4;
             data += "," + rand.nextInt(10000);
         }
-//        data = "Match2    "+data;
         return data;
     }
 

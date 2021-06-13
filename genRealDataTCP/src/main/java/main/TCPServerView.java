@@ -16,6 +16,7 @@ public class TCPServerView {
         new Thread(() -> {
             TCPServerController server1 = new TCPServerController(11000,1);
         }).start();
+        
 
         new Thread(() -> {
             TCPServerController server2 = new TCPServerController(11001,2);
