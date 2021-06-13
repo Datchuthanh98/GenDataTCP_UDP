@@ -6,18 +6,18 @@ import redis.MsgQueueRedis;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ClientMappingToRedis {
-    private static Integer numMessOnSecond = 0;
+    private static  volatile AtomicInteger numMessOnSecond = new AtomicInteger(0);
     private static Node root = new Node();
     private static MsgQueueRedis msgQueueRedis = new MsgQueueRedis("Matching");
     public static Integer numMatching= 0;
-    // priority queue with blocking for thread-safe process
+
     public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<>(1000000, (s1, s2) -> {
-        // comparator so that element go in the queue will be sorted
         for (int i = 0; i < 14; i++) {
             if (s1.charAt(i) < s2.charAt(i + 8)) return -1;
-            else if (s1.charAt(i) > s2.charAt(i)) return 1;
+            else if (s1.charAt(i) > s2.charAt(i + 8)) return 1;
         }
         if (s1.startsWith("NVL01")) return 1;
         else if (s2.startsWith("NVL01")) return -1;
@@ -34,10 +34,8 @@ public class ClientMappingToRedis {
                 try {
                     while (true) {
                         String data = clientController1.readData();
-                        // add to queue
                         queue.add(data);
-//                        System.out.println(data);
-                        numMessOnSecond++;
+                        numMessOnSecond.getAndIncrement();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -49,10 +47,8 @@ public class ClientMappingToRedis {
                 try {
                     while (true) {
                         String data = clientController2.readData();
-                        // add to queue
                         queue.add(data);
-//                        System.out.println(data);
-                        numMessOnSecond++;
+                        numMessOnSecond.getAndIncrement();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -63,7 +59,7 @@ public class ClientMappingToRedis {
                 try {
                     while (true) {
                         System.out.println("numMessOnSecond : " + numMessOnSecond);
-                        numMessOnSecond = 0;
+                        numMessOnSecond.set(0);
                         Thread.sleep(1000);
                     }
                 } catch (Exception e) {
@@ -83,10 +79,9 @@ public class ClientMappingToRedis {
                         if (data == null) continue;
                         if (data.startsWith("NVL01")) {
                             // server 2
-                            // search on trie
+                            // SEARH ON TRIE
                             Node curr = root;
                             String[] dataArr = data.split(",");
-//                            String publicIp = dataArr[4];
                             String privateIp = dataArr[2];
                             String[] ipArr = privateIp.split("\\.");
                             for (int i = 0; i < 4; i++) {
@@ -95,8 +90,7 @@ public class ClientMappingToRedis {
                                 curr = curr.next[tmp];
                             }
                             if (curr.data != null) {
-                                // found
-                                // insert to db
+                                // found Phone Number Matching and insert to Database
                                 System.out.println(data + " " + curr.data);
                                 msgQueueRedis.add(data + " " + curr.data);
                                 numMatching++;
@@ -104,10 +98,9 @@ public class ClientMappingToRedis {
                             }
                         } else {
                             // server 1
-                            // add to trie
+                            // ADD TO TRIE
                             Node curr = root;
                             String[] dataArr = data.split("\\|");
-//                            String phone = dataArr[3];
                             String ip = dataArr[4];
                             String[] ipArr = ip.split("\\.");
                             for (int i = 0; i < 4; i++) {
@@ -115,7 +108,6 @@ public class ClientMappingToRedis {
                                 if (curr.next[tmp] == null) curr.next[tmp] = new Node();
                                 curr = curr.next[tmp];
                             }
-//                            curr.phone = phone;
                             curr.data = data;
                         }
 
@@ -142,7 +134,6 @@ public class ClientMappingToRedis {
 
     static class Node {
         String data;
-        //        String phone;
         Node[] next = new Node[256];
     }
 }

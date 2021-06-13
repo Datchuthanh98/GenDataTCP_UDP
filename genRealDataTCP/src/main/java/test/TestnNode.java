@@ -7,18 +7,20 @@ public class TestnNode {
         System.out.println(root.x); //5
 
         Node curr = root;
-        curr = curr.next;
+//        curr = curr.next;
         System.out.println(curr.x); //6
 
         System.out.println(root.x); //5
+
+        root.x = 123;
+        System.out.println(curr.x);
 
     }
 
     static class Node {
         int x;
         Node next;
-
-        public Node(int x){
+        Node(int x){
             this.x = x;
         }
     }
