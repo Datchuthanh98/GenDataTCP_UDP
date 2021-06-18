@@ -19,7 +19,7 @@ public class ClientMappingToRedis {
     private static MsgQueueRedis msgQueueRedis = new MsgQueueRedis("Matching");
     public static Integer numMatching= 0;
 
-    public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<String>(1000000, new Comparator<String>() {
+    public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<String>(10000000, new Comparator<String>() {
         public int compare(String s1, String s2) {
             for (int i = 0; i < 14; i++) {
                 if (s1.charAt(i) < s2.charAt(i + 8)) return -1;
@@ -38,8 +38,8 @@ public class ClientMappingToRedis {
         try {
             final TCPCLientController clientController1 = new TCPCLientController(InetAddress.getByName("localhost"), 11000);
             final TCPCLientController clientController2 = new TCPCLientController(InetAddress.getByName("localhost"), 11001);
-            final FileWriter myWriterFile1 = new FileWriter("data1.txt");
-            final FileWriter myWriterFile2 = new FileWriter("data2.txt");
+//            final FileWriter myWriterFile1 = new FileWriter("data1.txt");
+//            final FileWriter myWriterFile2 = new FileWriter("data2.txt");
 
             // read data from server 1
             new Thread(new Runnable() {
@@ -50,7 +50,7 @@ public class ClientMappingToRedis {
                             String data = clientController1.readData();
                             queue.add(data);
                             numMessOnSecond.getAndIncrement();
-                            myWriterFile1.write(data+ "\n");
+//                            myWriterFile1.write(data+ "\n");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -66,7 +66,7 @@ public class ClientMappingToRedis {
                             String data = clientController2.readData();
                             queue.add(data);
                             numMessOnSecond.getAndIncrement();
-                            myWriterFile2.write(data+ "\n");
+//                            myWriterFile2.write(data+ "\n");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -122,7 +122,7 @@ public class ClientMappingToRedis {
                                 // server 1
                                 // ADD TO TRIE
                                 Node curr = root;
-                                String[] dataArr = data.split("\\|");
+                                String[] dataArr = data.split(",");
                                 String ip = dataArr[4];
                                 String[] ipArr = ip.split("\\.");
                                 for (int i = 0; i < 4; i++) {

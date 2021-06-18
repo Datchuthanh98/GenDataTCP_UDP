@@ -10,6 +10,7 @@ import net.andreinc.mockneat.MockNeat;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.DateFormat;
@@ -33,9 +34,7 @@ public class TCPServerController {
         try {
             serverSocket = new ServerSocket(port);
             System.out.println("Server TCP with port : " + port + " is running...");
-            while (true) {
-                listening(option);
-            }
+            listening(option);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -46,8 +45,8 @@ public class TCPServerController {
         try {
             clientSocket = serverSocket.accept();
             System.out.println(clientSocket.getInetAddress());
-            final ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
-            ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
+            final PrintWriter oos = new PrintWriter(clientSocket.getOutputStream());
+
 
             new Thread(new Runnable() {
                 public void run() {
@@ -55,9 +54,11 @@ public class TCPServerController {
                         while (true) {
                             while (lock.getAndSet(true));
                             if (option == 1) {
-                                oos.writeObject(genDataFakeFile1());
+                                oos.println(genDataFakeFile1());
+                                oos.flush();
                             } else {
-                                oos.writeObject(genDataFakeFile2());
+                                oos.println(genDataFakeFile2());
+                                oos.flush();
                             }
                             lock.set(false);
                             Thread.sleep(1);
@@ -74,9 +75,11 @@ public class TCPServerController {
                         while (true) {
                             while (lock.getAndSet(true));
                             if (option == 1) {
-                                oos.writeObject(genDataMatchFile1());
+                                oos.println(genDataMatchFile1());
+                                oos.flush();
                             } else {
-                                oos.writeObject(genDataMatchFile2());
+                                oos.println(genDataMatchFile2());
+                                oos.flush();
                             }
                             lock.set(false);
                             Thread.sleep(500);
@@ -118,12 +121,12 @@ public class TCPServerController {
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         String strDate = dateFormat.format(date);
-        data += strDate + "|RadiusMessage";
+        data += strDate + ",RadiusMessage";
 
         if (Math.random() < 0.5) {
-            data += "|Start";
+            data += ",Start";
         } else {
-            data += "|Stop";
+            data += ",Stop";
         }
 
         Random rand = new Random();
@@ -132,12 +135,12 @@ public class TCPServerController {
             phone += rand.nextInt(10);
         }
 
-        data += "|" + phone;
+        data += "," + phone;
 
         MockNeat mock = MockNeat.threadLocal();
 
         String ipv4 = mock.ipv4s().val();
-        data += "|" + ipv4;
+        data += "," + ipv4;
         return data;
     }
 
@@ -164,12 +167,12 @@ public class TCPServerController {
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         String strDate = dateFormat.format(date);
-        data += strDate + "|RadiusMessage";
+        data += strDate + ",RadiusMessage";
 
         if (Math.random() < 0.5) {
-            data += "|Start";
+            data += ",Start";
         } else {
-            data += "|Stop";
+            data += ",Stop";
         }
 
         Random rand = new Random();
@@ -177,8 +180,8 @@ public class TCPServerController {
         for (int i = 0; i < 9; i++) {
             phone += rand.nextInt(10);
         }
-        data += "|" + phone;
-        data += "|" + ipPrivateMatching;
+        data += "," + phone;
+        data += "," + ipPrivateMatching;
         return data;
     }
 
