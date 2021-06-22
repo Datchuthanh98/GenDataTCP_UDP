@@ -8,10 +8,11 @@ import java.net.UnknownHostException;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
+//de t demo cho xem
 public class TCPClientView {
 
-    private static volatile AtomicInteger numMessOnSecond = new AtomicInteger(0);
+    private static volatile AtomicInteger numMessOnSecondData1 = new AtomicInteger(0);
+    private static volatile AtomicInteger numMessOnSecondData2 = new AtomicInteger(0);
 
     public static void main(String[] args) throws UnknownHostException {
         try {
@@ -25,8 +26,7 @@ public class TCPClientView {
                     try {
                         while (true) {
                             String data = clientController1.readData();
-                            System.out.println(data);
-                            numMessOnSecond.getAndIncrement();
+                            numMessOnSecondData1.getAndIncrement();
 //                            myWriterFile1.write(data+ "\n");
                         }
                     } catch (Exception e) {
@@ -41,8 +41,7 @@ public class TCPClientView {
                     try {
                         while (true) {
                             String data = clientController2.readData();
-                            System.out.println(data);
-                            numMessOnSecond.getAndIncrement();
+                            numMessOnSecondData2.getAndIncrement();
 //                            myWriterFile2.write(data+ "\n");
                         }
                     } catch (Exception e) {
@@ -55,8 +54,13 @@ public class TCPClientView {
                 public void run() {
                     try {
                         while (true) {
-                            System.out.println("numMessOnSecond : " + numMessOnSecond);
-                            numMessOnSecond.set(0);
+                            System.out.println("numMessOnSecond1 : " + numMessOnSecondData1);
+                            System.out.println("numMessOnSecond2 : " + numMessOnSecondData2);
+//                            int total = numMessOnSecondData1.get() + numMessOnSecondData2.get();
+//                            System.out.println("Total :"+total);
+                            System.out.println("-------------------------------------------");
+                            numMessOnSecondData1.set(0);
+                            numMessOnSecondData2.set(0);
                             Thread.sleep(1000);
                         }
                     } catch (Exception e) {

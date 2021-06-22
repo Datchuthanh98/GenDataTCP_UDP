@@ -19,70 +19,73 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * @author Ryan
- */
+
 public class TCPServerController {
-
+    private static  volatile AtomicInteger numMessOnSecond = new AtomicInteger(0);
     private ServerSocket serverSocket;
     private Socket clientSocket;
     public static String ipPrivateMatching = "10.100.14.16";
     private volatile AtomicBoolean lock = new AtomicBoolean(false);
 
-    public TCPServerController(int port, int option) {
+    public TCPServerController(int port, int option,int msgK) {
         try {
             serverSocket = new ServerSocket(port);
             System.out.println("Server TCP with port : " + port + " is running...");
-            listening(option);
+            listening(option,msgK);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    private void listening(final int option) {
+    private void listening(final int option, final int msgk) {
         try {
             clientSocket = serverSocket.accept();
             System.out.println(clientSocket.getInetAddress());
             final PrintWriter oos = new PrintWriter(clientSocket.getOutputStream());
 
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        while (true) {
-                            while (lock.getAndSet(true));
-                            if (option == 1) {
-                                oos.println(genDataFakeFile1());
-                                oos.flush();
-                            } else {
-                                oos.println(genDataFakeFile2());
-                                oos.flush();
+            for(int i=0 ; i<msgk*2; i++){
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            while (true) {
+                                while (lock.getAndSet(true));
+                                numMessOnSecond.getAndIncrement();
+                                if (option == 1) {
+                                    oos.println("number"+numMessOnSecond+","+genDataFakeFile1());
+                                    oos.flush();
+                                } else {
+                                    oos.println("number"+numMessOnSecond+","+genDataFakeFile2());
+                                    oos.flush();
+                                }
+                                lock.set(false);
+                                Thread.sleep(1);
                             }
-                            lock.set(false);
-                            Thread.sleep(1);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                }
-            }).start();
+                }).start();
+            }
+
 
             new Thread(new Runnable() {
                 public void run() {
                     try {
                         while (true) {
                             while (lock.getAndSet(true));
+                            numMessOnSecond.getAndIncrement();
                             if (option == 1) {
-                                oos.println(genDataMatchFile1());
+                                oos.println("number"+numMessOnSecond+","+genDataMatchFile1());
                                 oos.flush();
                             } else {
-                                oos.println(genDataMatchFile2());
+                                oos.println("number"+numMessOnSecond+","+genDataMatchFile2());
                                 oos.flush();
                             }
                             lock.set(false);
-                            Thread.sleep(500);
+                            Thread.sleep(1000);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -95,7 +98,7 @@ public class TCPServerController {
                     try {
                         while (true) {
                             resetIpPrivateMatching();
-                            Thread.sleep(500);
+                            Thread.sleep(2000);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
