@@ -14,10 +14,10 @@ import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
 
 public class ClientMappingToRedis {
-    private static  volatile AtomicInteger numMessOnSecond = new AtomicInteger(0);
     private static Node root = new Node();
-    private static MsgQueueRedis msgQueueRedis = new MsgQueueRedis("Matching");
+    private static MsgQueueRedis msgQueueRedis = new MsgQueueRedis();
     public static Integer numMatching= 0;
+
 
     public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<String>(10000000, new Comparator<String>() {
         public int compare(String s1, String s2) {
@@ -44,13 +44,11 @@ public class ClientMappingToRedis {
             // read data from server 1
             new Thread(new Runnable() {
                 public void run() {
-
                     try {
                         while (true) {
                             String data = clientController1.readData();
                             queue.add(data);
-                            numMessOnSecond.getAndIncrement();
-//                            myWriterFile1.write(data+ "\n");
+
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -65,8 +63,7 @@ public class ClientMappingToRedis {
                         while (true) {
                             String data = clientController2.readData();
                             queue.add(data);
-                            numMessOnSecond.getAndIncrement();
-//                            myWriterFile2.write(data+ "\n");
+
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -74,29 +71,19 @@ public class ClientMappingToRedis {
                 }
             }).start();
 
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        while (true) {
-                            System.out.println("numMessOnSecond : " + numMessOnSecond);
-                            numMessOnSecond.set(0);
-                            Thread.sleep(1000);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+
 
             new Thread(new Runnable() {
                 public void run() {
+                    boolean match = false;
+                    long startTime = 0;
                     try {
-                        // startTime and count for calculation per second
-                        long startTime = System.currentTimeMillis();
-                        int count = 0;
-
                         while (true) {
                             // get data from queue if queue is not empty
+                            if(match == true){
+                                match = false;
+                                startTime = System.currentTimeMillis();
+                            }
                             String data = queue.poll();
                             if (data == null) continue;
                             if (data.startsWith("NVL01")) {
@@ -112,11 +99,20 @@ public class ClientMappingToRedis {
                                     curr = curr.next[tmp];
                                 }
                                 if (curr.data != null) {
-                                    // found Phone Number Matching and insert to Database
-                                    System.out.println(data + " " + curr.data);
-                                    msgQueueRedis.add(data + " " + curr.data);
-                                    numMatching++;
-                                    System.out.println("numMatching " + numMatching);
+                                    // FOUND PHONE NUMBER MATCHING AND INSERT TO DATABASE
+                                    System.out.println("data1 :"+data);
+                                    String [] arrData1 = data.split(",");
+                                    String [] arrData2 = curr.data.split(",");
+                                    if(arrData2[2].equals("Start")){
+                                        String key = arrData2[0]+"_"+arrData2[3]+"_"+arrData1[4]+"_"+arrData1[5];
+                                        String value = data +"_"+curr.data;
+                                        msgQueueRedis.addByKeyVlue(key,value);
+                                        long currTime = System.currentTimeMillis();
+                                        System.out.println("time execute : " + (currTime-startTime) +" ms");
+                                        match = true;
+                                        numMatching++;
+                                        System.out.println("numMatching " + numMatching);
+                                    }
                                 }
                             } else {
                                 // server 1
@@ -132,16 +128,6 @@ public class ClientMappingToRedis {
                                 }
                                 curr.data = data;
                             }
-
-                            // calculation per second
-                            count++;
-                            long currTime = System.currentTimeMillis();
-                            if (currTime - startTime >= 1000) {
-                                System.out.println("Processed " + count + " in 1s");
-                                System.out.println("Left in queue: " + queue.size());
-                                count = 0;
-                                startTime = currTime;
-                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -154,8 +140,6 @@ public class ClientMappingToRedis {
             e.printStackTrace();
         }
     }
-
-
 
 
     static class Node {

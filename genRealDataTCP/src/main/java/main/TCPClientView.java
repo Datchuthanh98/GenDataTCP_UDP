@@ -18,19 +18,13 @@ public class TCPClientView {
         try {
             final TCPCLientController clientController1 = new TCPCLientController(InetAddress.getByName("localhost"), 11000);
             final TCPCLientController clientController2 = new TCPCLientController(InetAddress.getByName("localhost"), 11001);
-//            final FileWriter myWriterFile1 = new FileWriter("data1.txt");
-//            final FileWriter myWriterFile2 = new FileWriter("data2.txt");
 
-            // read data from server 1
             new Thread(new Runnable() {
                 public void run() {
                     try {
                         while (true) {
                             String data = clientController1.readData();
-                            System.out.println("================================");
                             System.out.println(data);
-//                            System.out.println(data);
-                            System.out.println("================================");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -38,22 +32,19 @@ public class TCPClientView {
                 }
             }).start();
 
-            // read data from server 2
+
             new Thread(new Runnable() {
                 public void run() {
                     try {
                         while (true) {
                             String data = clientController2.readData();
-//                            System.out.println(data);
-//                            myWriterFile2.write(data+ "\n");
+                            System.out.println(data);
                         }
                     } catch (Exception e) {
-//                        e.printStackTrace();
+
                     }
                 }
             }).start();
-
-
 
         } catch (Exception e) {
             e.printStackTrace();

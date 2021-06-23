@@ -13,9 +13,9 @@ public class ThreadReadRedis extends Thread{
     @Override
     public void run(){
         while (true){
-          String mes =    msgQueueRedis.pollString();
-          if (mes != null)
-              System.out.println("read : " + mes);
+//          String mes =    msgQueueRedis.pollString();
+//          if (mes != null)
+//              System.out.println("read : " + mes);
         }
 
     }

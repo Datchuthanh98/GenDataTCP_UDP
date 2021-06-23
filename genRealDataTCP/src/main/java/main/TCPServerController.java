@@ -92,7 +92,7 @@ public class TCPServerController {
                                 oos.flush();
                             }
                             lock.set(false);
-                            Thread.sleep(1000);
+                            Thread.sleep(10000);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

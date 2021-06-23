@@ -22,6 +22,9 @@ public class MsgQueueRedis
     
     public MsgQueueRedis(final String queueName) {
         this.jedis = JedisFactory.getInstance().getJedisPool().getResource();
+        if (this.jedis == null) {
+            this.jedis = JedisFactory.getInstance().getJedisPool().getResource();
+        }
         this.queueName = queueName;
     }
     
@@ -53,76 +56,98 @@ public class MsgQueueRedis
         }
     }
 
-    
-    public String pollString() {
-        Jedis jedis = null;
-        String str = "";
+    public void addByKeyVlue(final String key,final String value) {
         try {
-            if (jedis == null) {
-                jedis = JedisFactory.getInstance().getJedisPool().getResource();
-            }
-            if (jedis != null) {
-                str = jedis.rpop(this.queueName);
-            }
+            jedis.set(key,value);
         }
         catch (Exception e) {
             e.printStackTrace();
-            return str;
+            return;
         }
-        finally {
-            if (jedis != null) {
-                jedis.close();
-            }
-        }
-        if (jedis != null) {
-            jedis.close();
-        }
-        return str;
     }
-    
-    public long getSize() {
-        Jedis jedis = null;
-        Long result = 0L;
+
+    public String getByKeyValue(final String key) {
         try {
-            jedis = JedisFactory.getInstance().getJedisPool().getResource();
-            result = jedis.llen(this.queueName);
+            String data = jedis.get(key);
+            System.out.println(data);
+            return data;
         }
         catch (Exception e) {
             e.printStackTrace();
-            return result;
+            return "";
         }
-        finally {
-            if (jedis != null) {
-                jedis.close();
-            }
-        }
-        if (jedis != null) {
-            jedis.close();
-        }
-        return result;
     }
+
     
-    public boolean isEmpty() {
-        Jedis jedis = null;
-        boolean result = false;
-        try {
-            jedis = JedisFactory.getInstance().getJedisPool().getResource();
-            if (jedis.llen(this.queueName) == 0L) {
-                result = true;
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return result;
-        }
-        finally {
-            if (jedis != null) {
-                jedis.close();
-            }
-        }
-        if (jedis != null) {
-            jedis.close();
-        }
-        return result;
-    }
+//    public String pollString() {
+//        Jedis jedis = null;
+//        String str = "";
+//        try {
+//            if (jedis == null) {
+//                jedis = JedisFactory.getInstance().getJedisPool().getResource();
+//            }
+//            if (jedis != null) {
+//                str = jedis.rpop(this.queueName);
+//            }
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            return str;
+//        }
+//        finally {
+//            if (jedis != null) {
+//                jedis.close();
+//            }
+//        }
+//        if (jedis != null) {
+//            jedis.close();
+//        }
+//        return str;
+//    }
+    
+//    public long getSize() {
+//        Jedis jedis = null;
+//        Long result = 0L;
+//        try {
+//            jedis = JedisFactory.getInstance().getJedisPool().getResource();
+//            result = jedis.llen(this.queueName);
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            return result;
+//        }
+//        finally {
+//            if (jedis != null) {
+//                jedis.close();
+//            }
+//        }
+//        if (jedis != null) {
+//            jedis.close();
+//        }
+//        return result;
+//    }
+//
+//    public boolean isEmpty() {
+//        Jedis jedis = null;
+//        boolean result = false;
+//        try {
+//            jedis = JedisFactory.getInstance().getJedisPool().getResource();
+//            if (jedis.llen(this.queueName) == 0L) {
+//                result = true;
+//            }
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            return result;
+//        }
+//        finally {
+//            if (jedis != null) {
+//                jedis.close();
+//            }
+//        }
+//        if (jedis != null) {
+//            jedis.close();
+//        }
+//        return result;
+//    }
 }

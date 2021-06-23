@@ -29,8 +29,6 @@ public class TCPCLientController {
     }
     public void getStream(){
         try{
-//            ois = new  ObjectInputStream(socket.getInputStream());
-
              ois = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         }catch(Exception e){
             e.printStackTrace();
