@@ -47,7 +47,7 @@ public class TCPClientView {
 //                            myWriterFile2.write(data+ "\n");
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+//                        e.printStackTrace();
                     }
                 }
             }).start();

@@ -68,6 +68,8 @@ public class TCPServerController {
 
 
     private void listening(final int option) {
+
+        while (true){
         try {
             clientSocket = serverSocket.accept();
             System.out.println(clientSocket.getInetAddress());
@@ -100,7 +102,7 @@ public class TCPServerController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        }
 
     }
 
