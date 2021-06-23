@@ -26,48 +26,51 @@ public class testFile {
 //        }
 
         //write File
-        try {
-            final FileWriter myWriter = new FileWriter("uchiha.txt");
-
-            new Thread(new Runnable() {
-                public void run() {
-                    while (true) {
-                        try {
-                            System.out.println("Number: "+numMessOnSecond);
-                            numMessOnSecond.getAndIncrement() ;
-                            myWriter.write("number "+ numMessOnSecond+ "\n");
-                            Thread.sleep(1);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }).start();
-
-
-            System.out.println("Successfully wrote to the file.");
-        } catch (Exception e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-
-
-        //Read File
 //        try {
-//            File myObj = new File("uchiha.txt");
-//            Scanner myReader = new Scanner(myObj);
-//            while (myReader.hasNextLine()) {
-//                String data = myReader.nextLine();
-//                System.out.println(data);
-//            }
-//            myReader.close();
-//        } catch (FileNotFoundException e) {
+//            final FileWriter myWriter = new FileWriter("uchiha.txt");
+//
+//            new Thread(new Runnable() {
+//                public void run() {
+//                    while (true) {
+//                        try {
+//                            System.out.println("Number: "+numMessOnSecond);
+//                            numMessOnSecond.getAndIncrement() ;
+//                            myWriter.write("number "+ numMessOnSecond+ "\n");
+//                            Thread.sleep(1);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//            }).start();
+//
+//
+//            System.out.println("Successfully wrote to the file.");
+//        } catch (Exception e) {
 //            System.out.println("An error occurred.");
 //            e.printStackTrace();
 //        }
 
+
+        //Read File
+        String dataFile = "";
+        try {
+            File myObj = new File("data1_1000.txt");
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                dataFile = dataFile +data +"\n";
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        System.out.println("Datafileeeeeeee");
+        System.out.println(dataFile);
 
         //Delete File
 //        try {

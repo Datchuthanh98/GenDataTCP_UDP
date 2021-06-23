@@ -20,14 +20,16 @@ public class TCPClientView {
             final TCPCLientController clientController2 = new TCPCLientController(InetAddress.getByName("localhost"), 11001);
 //            final FileWriter myWriterFile1 = new FileWriter("data1.txt");
 //            final FileWriter myWriterFile2 = new FileWriter("data2.txt");
+
             // read data from server 1
             new Thread(new Runnable() {
                 public void run() {
                     try {
                         while (true) {
                             String data = clientController1.readData();
-                            numMessOnSecondData1.getAndIncrement();
-//                            myWriterFile1.write(data+ "\n");
+                            System.out.println("meme");
+                            System.out.println(data);
+//                            System.out.println(data);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -41,27 +43,8 @@ public class TCPClientView {
                     try {
                         while (true) {
                             String data = clientController2.readData();
-                            numMessOnSecondData2.getAndIncrement();
+//                            System.out.println(data);
 //                            myWriterFile2.write(data+ "\n");
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        while (true) {
-                            System.out.println("numMessOnSecond1 : " + numMessOnSecondData1);
-                            System.out.println("numMessOnSecond2 : " + numMessOnSecondData2);
-//                            int total = numMessOnSecondData1.get() + numMessOnSecondData2.get();
-//                            System.out.println("Total :"+total);
-                            System.out.println("-------------------------------------------");
-                            numMessOnSecondData1.set(0);
-                            numMessOnSecondData2.set(0);
-                            Thread.sleep(1000);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
