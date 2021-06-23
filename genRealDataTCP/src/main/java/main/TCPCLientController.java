@@ -15,7 +15,7 @@ import java.net.Socket;
  */
 public class TCPCLientController {
     private Socket socket;
-    private ObjectInputStream ois;
+    private BufferedReader ois;
 
     public TCPCLientController(InetAddress IP, int port){
         System.out.println("Clien TCP with"+port+ "is running");
@@ -29,15 +29,16 @@ public class TCPCLientController {
     }
     public void getStream(){
         try{
-            ois = new  ObjectInputStream(socket.getInputStream());
+//            ois = new  ObjectInputStream(socket.getInputStream());
 
+             ois = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         }catch(Exception e){
             e.printStackTrace();
         }
     }
     
     public String readData() throws IOException, ClassNotFoundException {
-        return (String) ois.readObject();
+        return (String) ois.readLine();
     }
     
 

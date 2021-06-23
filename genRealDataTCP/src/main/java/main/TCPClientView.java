@@ -27,9 +27,10 @@ public class TCPClientView {
                     try {
                         while (true) {
                             String data = clientController1.readData();
-                            System.out.println("meme");
+                            System.out.println("================================");
                             System.out.println(data);
 //                            System.out.println(data);
+                            System.out.println("================================");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
