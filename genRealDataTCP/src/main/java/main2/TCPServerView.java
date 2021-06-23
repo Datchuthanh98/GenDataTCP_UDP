@@ -18,13 +18,11 @@ public class TCPServerView {
             public void run() {
                 try {
                     final TCPServerController server1 = new TCPServerController(11000);
-                    while (true) {
-                        String data = server1.readData();
-                        System.out.println(data);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
+//                    while (true) {
+//                        String data = server1.readData();
+//                        System.out.println(data);
+//                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -36,13 +34,11 @@ public class TCPServerView {
             public void run() {
                 try {
                     final TCPServerController server2 = new TCPServerController(11001);
-                    while (true) {
-                        String data = server2.readData();
-                        System.out.println(data);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
+//                    while (true) {
+//                        String data = server2.readData();
+//                        System.out.println(data);
+//                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 

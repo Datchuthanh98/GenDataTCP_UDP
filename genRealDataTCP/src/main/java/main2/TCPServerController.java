@@ -18,32 +18,40 @@ public class TCPServerController {
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private volatile AtomicBoolean lock = new AtomicBoolean(false);
-    private BufferedReader os;
+
 
     public TCPServerController(int port) {
-        try {
-            serverSocket = new ServerSocket(port);
-            System.out.println("Server TCP with port : " + port + " is running...");
-
-            listening();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    private void listening() {
+        while (true) {
             try {
-                clientSocket = serverSocket.accept();
-                System.out.println(clientSocket.getInetAddress());
-                os = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                serverSocket = new ServerSocket(port);
+                System.out.println("Server TCP with port : " + port + " is running...");
 
+                listening();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
     }
 
-    public String readData() throws IOException, ClassNotFoundException {
-        return (String) os.readLine();
+    private void listening() {
+        while (true) {
+            try {
+                clientSocket = serverSocket.accept();
+                System.out.println(clientSocket.getInetAddress());
+                BufferedReader os = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                new Thread(() -> {
+                    try {
+                        while (true) {
+                            System.out.println(os.readLine());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
