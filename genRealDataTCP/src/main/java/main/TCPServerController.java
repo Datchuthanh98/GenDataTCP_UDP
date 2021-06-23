@@ -71,7 +71,7 @@ public class TCPServerController {
         try {
             clientSocket = serverSocket.accept();
             System.out.println(clientSocket.getInetAddress());
-            final PrintWriter oos = new PrintWriter(clientSocket.getOutputStream());
+            final ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
 
             new Thread(new Runnable() {
                 public void run() {
@@ -81,10 +81,10 @@ public class TCPServerController {
 //                            numMessOnSecond.getAndIncrement();
 
                             if (option == 1) {
-                                oos.println(data1);
+                                oos.writeObject(data1);
                                 oos.flush();
                             } else {
-                                oos.println(data2);
+                                oos.writeObject(data2);
                                 oos.flush();
                             }
                             lock.set(false);
