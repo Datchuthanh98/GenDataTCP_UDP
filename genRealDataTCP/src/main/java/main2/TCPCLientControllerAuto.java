@@ -17,16 +17,13 @@ import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
 
-/**
- *
- * @author Ryan
- */
 public class TCPCLientControllerAuto {
     private Socket socket;
     private PrintWriter ois;
     private String data1="";
     private String data2="";
-    public static String ipPrivateMatching = "10.100.14.16";
+    public Boolean ipPr1 = false;
+    public Boolean ipPr2 = false;
 
     public TCPCLientControllerAuto(InetAddress IP, int port, int option , int msg){
         System.out.println("Clien TCP with"+port+ "is running");
@@ -46,7 +43,8 @@ public class TCPCLientControllerAuto {
 //                System.out.println("An error occurred.");
 //                e.printStackTrace();
 //            }
-//
+
+
 //            try {
 //                File myObj = new File("data2_" + msg + ".txt");
 //                Scanner myReader = new Scanner(myObj);
@@ -73,8 +71,13 @@ public class TCPCLientControllerAuto {
             public void run() {
                 try {
                     while (true) {
-                        resetIpPrivateMatching();
-                        Thread.sleep(1);
+                        if(ipPr1 == true && ipPr2 == true){
+                            System.out.println("aloooooooooooooooooooos");
+                            resetIpPrivateMatching();
+                            ipPr1 = false;
+                            ipPr2 = false;
+                        }
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -85,21 +88,21 @@ public class TCPCLientControllerAuto {
         new Thread(new Runnable() {
             public void run() {
                 try {
+                    MockNeat mock = MockNeat.threadLocal();
                     while (true) {
-                        if (option == 1) {
                             String data1="";
+                            String data2 ="";
                             for(int i =0 ;i< msg;i++){
-                                data1 += genDataMatchFile1()+"\n";
+                                String ipPrivateMatching = "10.11.12.13";
+                                data1 += genDataMatchFile1( ipPrivateMatching)+"\n";
+                                data2 += genDataMatchFile2(ipPrivateMatching)+"\n";
                             }
+                        if (option == 1) {
                             System.out.println(data1);
                             ois.write(data1);
                             ois.flush();
                         } else {
-                            String data2 ="";
-                            for(int i =0 ;i< msg;i++){
-                                data2 += genDataMatchFile2()+"\n";
-                            }
-                            System.out.println(data1);
+                            System.out.println(data2);
                             ois.write(data2);
                             ois.flush();
                         }
@@ -111,8 +114,6 @@ public class TCPCLientControllerAuto {
             }
         }).start();
     }
-
-
 
     public static String genDataFakeFile1() {
         String data = "";
@@ -160,7 +161,7 @@ public class TCPCLientControllerAuto {
         return data;
     }
 
-    public static String genDataMatchFile1() {
+    public static String genDataMatchFile1(String ipPrivateMatching) {
         String data = "";
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
@@ -183,7 +184,7 @@ public class TCPCLientControllerAuto {
         return data;
     }
 
-    public static String genDataMatchFile2() {
+    public static String genDataMatchFile2(String ipPrivateMatching) {
         String data = "OK_NVL01_1";
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
@@ -205,8 +206,7 @@ public class TCPCLientControllerAuto {
     }
 
     public static void resetIpPrivateMatching() {
-        MockNeat mock = MockNeat.threadLocal();
-        ipPrivateMatching = mock.ipv4s().val();
+
     }
 
 
