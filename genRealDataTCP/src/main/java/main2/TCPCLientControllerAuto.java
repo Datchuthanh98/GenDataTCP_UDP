@@ -21,13 +21,14 @@ import java.util.Scanner;
  *
  * @author Ryan
  */
-public class TCPCLientController {
+public class TCPCLientControllerAuto {
     private Socket socket;
     private PrintWriter ois;
     private String data1="";
     private String data2="";
+    public static String ipPrivateMatching = "10.100.14.16";
 
-    public TCPCLientController(InetAddress IP, int port,int option ,int msg){
+    public TCPCLientControllerAuto(InetAddress IP, int port, int option , int msg){
         System.out.println("Clien TCP with"+port+ "is running");
         try{
             socket = new Socket(IP, port);
@@ -67,6 +68,20 @@ public class TCPCLientController {
     public void getStream(final int option , final int msg) throws IOException {
         ois = new PrintWriter(new PrintWriter(socket.getOutputStream()));
 
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    while (true) {
+                        resetIpPrivateMatching();
+                        Thread.sleep(1);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
         new Thread(new Runnable() {
             public void run() {
                 try {
@@ -74,15 +89,17 @@ public class TCPCLientController {
                         if (option == 1) {
                             String data1="";
                             for(int i =0 ;i< msg;i++){
-                                data1 += genDataFakeFile1()+"\n";
+                                data1 += genDataMatchFile1()+"\n";
                             }
+                            System.out.println(data1);
                             ois.write(data1);
                             ois.flush();
                         } else {
                             String data2 ="";
                             for(int i =0 ;i< msg;i++){
-                                data2 += genDataFakeFile2()+"\n";
+                                data2 += genDataMatchFile2()+"\n";
                             }
+                            System.out.println(data1);
                             ois.write(data2);
                             ois.flush();
                         }
@@ -141,6 +158,55 @@ public class TCPCLientController {
             data += "," + rand.nextInt(10000);
         }
         return data;
+    }
+
+    public static String genDataMatchFile1() {
+        String data = "";
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+        String strDate = dateFormat.format(date);
+        data += strDate + ",OK_RadiusMessage";
+
+        if (Math.random() < 0.5) {
+            data += ",Start";
+        } else {
+            data += ",Stop";
+        }
+
+        Random rand = new Random();
+        String phone = "84";
+        for (int i = 0; i < 9; i++) {
+            phone += rand.nextInt(10);
+        }
+        data += "," + phone;
+        data += "," + ipPrivateMatching;
+        return data;
+    }
+
+    public static String genDataMatchFile2() {
+        String data = "OK_NVL01_1";
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+        String strDate = dateFormat.format(date);
+        data += "," + strDate;
+        Random rand = new Random();
+
+        data += "," + ipPrivateMatching;
+        data += "," + rand.nextInt(10000);
+
+        MockNeat mock = MockNeat.threadLocal();
+
+        for (int i = 0; i < 2; i++) {
+            String ipv4 = mock.ipv4s().val();
+            data += "," + ipv4;
+            data += "," + rand.nextInt(10000);
+        }
+        return data;
+    }
+
+    public static void resetIpPrivateMatching() {
+        MockNeat mock = MockNeat.threadLocal();
+        ipPrivateMatching = mock.ipv4s().val();
     }
 
 
