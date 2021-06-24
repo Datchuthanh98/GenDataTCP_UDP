@@ -5,9 +5,16 @@
  */
 package main2;
 
+import net.andreinc.mockneat.MockNeat;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -26,38 +33,38 @@ public class TCPCLientController {
             socket = new Socket(IP, port);
             System.out.println("Socket: "+IP.getHostAddress()+":"+port);
 
-            try {
-                File myObj = new File("data1_" + msg + ".txt");
-                Scanner myReader = new Scanner(myObj);
-                while (myReader.hasNextLine()) {
-                    String data = myReader.nextLine();
-                    data1 = data1 +data +"\n";
-                }
-                myReader.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
+//            try {
+//                File myObj = new File("data1_" + msg + ".txt");
+//                Scanner myReader = new Scanner(myObj);
+//                while (myReader.hasNextLine()) {
+//                    String data = myReader.nextLine();
+//                    data1 = data1 +data +"\n";
+//                }
+//                myReader.close();
+//            } catch (FileNotFoundException e) {
+//                System.out.println("An error occurred.");
+//                e.printStackTrace();
+//            }
+//
+//            try {
+//                File myObj = new File("data2_" + msg + ".txt");
+//                Scanner myReader = new Scanner(myObj);
+//                while (myReader.hasNextLine()) {
+//                    String data = myReader.nextLine();
+//                    data2 = data2 +data +"\n";
+//                }
+//                myReader.close();
+//            } catch (FileNotFoundException e) {
+//                System.out.println("An error occurred.");
+//                e.printStackTrace();
+//            }
 
-            try {
-                File myObj = new File("data2_" + msg + ".txt");
-                Scanner myReader = new Scanner(myObj);
-                while (myReader.hasNextLine()) {
-                    String data = myReader.nextLine();
-                    data2 = data2 +data +"\n";
-                }
-                myReader.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
-
-            getStream(option);
+            getStream(option,msg);
         }catch(Exception e){
             e.printStackTrace();
         }
     }
-    public void getStream(final int option) throws IOException {
+    public void getStream(final int option , final int msg) throws IOException {
         ois = new PrintWriter(new PrintWriter(socket.getOutputStream()));
 
         new Thread(new Runnable() {
@@ -65,9 +72,17 @@ public class TCPCLientController {
                 try {
                     while (true) {
                         if (option == 1) {
+                            String data1="";
+                            for(int i =0 ;i< msg;i++){
+                                data1 += genDataFakeFile1()+"\n";
+                            }
                             ois.write(data1);
                             ois.flush();
                         } else {
+                            String data2 ="";
+                            for(int i =0 ;i< msg;i++){
+                                data2 += genDataFakeFile2()+"\n";
+                            }
                             ois.write(data2);
                             ois.flush();
                         }
@@ -79,4 +94,54 @@ public class TCPCLientController {
             }
         }).start();
     }
+
+
+
+    public static String genDataFakeFile1() {
+        String data = "";
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+        String strDate = dateFormat.format(date);
+        data += strDate + ",RadiusMessage";
+
+        if (Math.random() < 0.5) {
+            data += ",Start";
+        } else {
+            data += ",Stop";
+        }
+
+        Random rand = new Random();
+        String phone = "84";
+        for (int i = 0; i < 9; i++) {
+            phone += rand.nextInt(10);
+        }
+
+        data += "," + phone;
+
+        MockNeat mock = MockNeat.threadLocal();
+
+        String ipv4 = mock.ipv4s().val();
+        data += "," + ipv4;
+        return data;
+    }
+
+
+    public static String genDataFakeFile2() {
+        String data = "NVL01_1";
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+        String strDate = dateFormat.format(date);
+        data += "," + strDate;
+
+        MockNeat mock = MockNeat.threadLocal();
+        Random rand = new Random();
+        for (int i = 0; i < 3; i++) {
+            String ipv4 = mock.ipv4s().val();
+            data += "," + ipv4;
+            data += "," + rand.nextInt(10000);
+        }
+        return data;
+    }
+
+
 }

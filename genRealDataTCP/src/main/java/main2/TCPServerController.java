@@ -35,7 +35,9 @@ public class TCPServerController {
     private void listening() {
         while (true) {
             try {
+                System.out.println("accept wait accept");
                 clientSocket = serverSocket.accept();
+                System.out.println("client was accpeted ");
                 System.out.println(clientSocket.getInetAddress());
                 BufferedReader os = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 new Thread(() -> {
