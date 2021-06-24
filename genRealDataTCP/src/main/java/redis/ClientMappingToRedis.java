@@ -38,8 +38,6 @@ public class ClientMappingToRedis {
         try {
             final TCPCLientController clientController1 = new TCPCLientController(InetAddress.getByName("localhost"), 11000);
             final TCPCLientController clientController2 = new TCPCLientController(InetAddress.getByName("localhost"), 11001);
-//            final FileWriter myWriterFile1 = new FileWriter("data1.txt");
-//            final FileWriter myWriterFile2 = new FileWriter("data2.txt");
 
             // read data from server 1
             new Thread(new Runnable() {

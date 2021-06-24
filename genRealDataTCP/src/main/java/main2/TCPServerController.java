@@ -25,7 +25,6 @@ public class TCPServerController {
             try {
                 serverSocket = new ServerSocket(port);
                 System.out.println("Server TCP with port : " + port + " is running...");
-
                 listening();
             } catch (Exception e) {
                 e.printStackTrace();
