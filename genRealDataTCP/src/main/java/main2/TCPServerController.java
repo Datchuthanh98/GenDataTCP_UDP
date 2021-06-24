@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class TCPServerController {
-    private static volatile AtomicInteger numMessOnSecond = new AtomicInteger(0);
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private volatile AtomicBoolean lock = new AtomicBoolean(false);

@@ -36,15 +36,15 @@ public class GenData {
 
 
         try {
-            final FileWriter myWriterData1 = new FileWriter("data1_5000.txt");
-            final FileWriter myWriterData2 = new FileWriter("data2_5000.txt");
+            final FileWriter myWriterData1 = new FileWriter("data1_1000.txt");
+            final FileWriter myWriterData2 = new FileWriter("data2_1000.txt");
 
             new Thread(new Runnable() {
                 public void run() {
                     int i = 1 ;
                     Random rn = new Random();
                     try {
-                        while (i <=5000) {
+                        while (i <=1000) {
                             if(rn.nextInt(3) == 2){
                                 myWriterData1.append(genDataMatchFile1()+"\n");
                                 myWriterData2.append(genDataMatchFile2()+"\n");
@@ -124,7 +124,7 @@ public class GenData {
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         String strDate = dateFormat.format(date);
-        data += strDate + ",OK_RadiusMessage";
+        data += strDate + ",RadiusMessage";
 
         if (Math.random() < 0.5) {
             data += ",Start";
@@ -143,7 +143,7 @@ public class GenData {
     }
 
     public static String genDataMatchFile2() {
-        String data = "OK_NVL01_1";
+        String data = "NVL01_1";
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         String strDate = dateFormat.format(date);

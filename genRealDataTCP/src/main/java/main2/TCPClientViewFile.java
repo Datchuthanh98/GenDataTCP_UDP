@@ -14,5 +14,4 @@ public class TCPClientViewFile {
             e.printStackTrace();
         }
     }
-
 }
