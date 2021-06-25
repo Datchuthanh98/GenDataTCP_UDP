@@ -78,7 +78,7 @@ public class TCPCLientControllerFile {
                             ois.writeObject(data2);
                             ois.flush();
                         }
-                        Thread.sleep(10000);
+                        Thread.sleep(1000);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
