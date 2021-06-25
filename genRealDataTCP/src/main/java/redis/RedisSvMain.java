@@ -69,7 +69,6 @@ public class RedisSvMain {
                             e.printStackTrace();
                         }
                     }
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
