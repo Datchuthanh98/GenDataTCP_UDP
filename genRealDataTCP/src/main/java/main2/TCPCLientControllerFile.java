@@ -7,10 +7,7 @@ package main2;
 
 import net.andreinc.mockneat.MockNeat;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.text.DateFormat;
@@ -26,7 +23,7 @@ import java.util.Scanner;
  */
 public class TCPCLientControllerFile {
     private Socket socket;
-    private PrintWriter ois;
+    private ObjectOutputStream ois;
     private String data1="";
     private String data2="";
 
@@ -68,17 +65,17 @@ public class TCPCLientControllerFile {
         }
     }
     public void getStream(final int option , final int msg) throws IOException {
-        ois = new PrintWriter(new PrintWriter(socket.getOutputStream()));
+        ois = new ObjectOutputStream(socket.getOutputStream());
 
         new Thread(new Runnable() {
             public void run() {
                 try {
                     while (true) {
                         if (option == 1) {
-                            ois.write(data1);
+                            ois.writeObject(data1);
                             ois.flush();
                         } else {
-                            ois.write(data2);
+                            ois.writeObject(data2);
                             ois.flush();
                         }
                         Thread.sleep(10000);

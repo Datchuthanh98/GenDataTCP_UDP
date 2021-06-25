@@ -67,23 +67,23 @@ public class TCPCLientControllerAuto {
         ois = new PrintWriter(new PrintWriter(socket.getOutputStream()));
 
 
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    while (true) {
-                        if(ipPr1 == true && ipPr2 == true){
-                            System.out.println("aloooooooooooooooooooos");
-                            resetIpPrivateMatching();
-                            ipPr1 = false;
-                            ipPr2 = false;
-                        }
-
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            public void run() {
+//                try {
+//                    while (true) {
+//                        if(ipPr1 == true && ipPr2 == true){
+//                            System.out.println("aloooooooooooooooooooos");
+//                            resetIpPrivateMatching();
+//                            ipPr1 = false;
+//                            ipPr2 = false;
+//                        }
+//
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
 
         new Thread(new Runnable() {
             public void run() {
@@ -92,17 +92,18 @@ public class TCPCLientControllerAuto {
                     while (true) {
                             String data1="";
                             String data2 ="";
+                            //msg = 5000
                             for(int i =0 ;i< msg;i++){
                                 String ipPrivateMatching = "10.11.12.13";
                                 data1 += genDataMatchFile1( ipPrivateMatching)+"\n";
                                 data2 += genDataMatchFile2(ipPrivateMatching)+"\n";
                             }
                         if (option == 1) {
-                            System.out.println(data1);
+//                            System.out.println(data1);
                             ois.write(data1);
                             ois.flush();
                         } else {
-                            System.out.println(data2);
+//                            System.out.println(data2);
                             ois.write(data2);
                             ois.flush();
                         }

@@ -17,7 +17,7 @@ public class TCPServerController {
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private volatile AtomicBoolean lock = new AtomicBoolean(false);
-
+    private ObjectInputStream os;
 
     public TCPServerController(int port) {
         while (true) {
@@ -38,13 +38,19 @@ public class TCPServerController {
                 clientSocket = serverSocket.accept();
                 System.out.println("client was accpeted ");
                 System.out.println(clientSocket.getInetAddress());
-                BufferedReader os = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                 os = new ObjectInputStream(clientSocket.getInputStream());
                 new Thread(() -> {
                     try {
                         while (true) {
-                            System.out.println(os.readLine());
+                            String data = (String) os.readObject();
+//                            System.out.println(os.readObject());
+                            System.out.println("----------------------------------------------");
+                            System.out.println(data);
+                            String[] array =data.split("\n");
                         }
                     } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }).start();

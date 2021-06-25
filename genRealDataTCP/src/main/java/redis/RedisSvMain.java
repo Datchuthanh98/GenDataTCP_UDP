@@ -8,6 +8,7 @@ package redis;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Comparator;
@@ -22,8 +23,7 @@ public class RedisSvMain {
     private static Node root = new Node();
     private static MsgQueueRedis msgQueueRedis = new MsgQueueRedis();
     public static Integer numMatching= 0;
-
-
+    public static long startTime = 0;
     public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<String>(10000000, new Comparator<String>() {
         public int compare(String s1, String s2) {
             for (int i = 0; i < 14; i++) {
@@ -36,8 +36,6 @@ public class RedisSvMain {
         }
     });
 
-
-
     public static void main(String[] args) {
         new Thread(new Runnable() {
             public void run() {
@@ -49,18 +47,22 @@ public class RedisSvMain {
                             Socket clientSocket = serverSocket.accept();
                             System.out.println("client was accpeted ");
                             System.out.println(clientSocket.getInetAddress());
-                            BufferedReader os = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                            new Thread(() -> {
+                            ObjectInputStream os = new ObjectInputStream(clientSocket.getInputStream());
                                 try {
                                     while (true) {
-                                        String data = os.readLine();
-                                        System.out.println(data);
-                                        queue.add(data);
+                                        try {
+                                            String[] data  = os.readObject().toString().split("\n");
+                                            for(int i =0 ;i <data.length;i++){
+                                                queue.add(data[i]);
+                                            }
+                                        } catch (ClassNotFoundException e) {
+                                            e.printStackTrace();
+                                        }
+
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-                            }).start();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -71,7 +73,6 @@ public class RedisSvMain {
                 }
             }
         }).start();
-
 
         new Thread(new Runnable() {
             public void run() {
@@ -83,23 +84,23 @@ public class RedisSvMain {
                             Socket clientSocket = serverSocket.accept();
                             System.out.println("client was accpeted ");
                             System.out.println(clientSocket.getInetAddress());
-                            BufferedReader os = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                            new Thread(() -> {
+                            ObjectInputStream os = new ObjectInputStream(clientSocket.getInputStream());
                                 try {
-                                    while (true) {
-                                        String data = os.readLine();
-                                        System.out.println(data);
-                                        queue.add(data);
+                                    try {
+                                        String[] data  = os.readObject().toString().split("\n");
+                                        for(int i =0 ;i <data.length;i++){
+                                            queue.add(data[i]);
+                                        }
+                                    } catch (ClassNotFoundException e) {
+                                        e.printStackTrace();
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-                            }).start();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -109,7 +110,6 @@ public class RedisSvMain {
         new Thread(new Runnable() {
             public void run() {
                 boolean match = false;
-                long startTime = 0;
                 try {
                     while (true) {
                         // get data from queue if queue is not empty
@@ -167,7 +167,6 @@ public class RedisSvMain {
                 }
             }
         }).start();
-
     }
 
     static class Node {

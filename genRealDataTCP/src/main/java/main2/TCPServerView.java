@@ -23,7 +23,6 @@ public class TCPServerView {
                 }
             }
         }).start();
-        
 
         new Thread(new Runnable() {
             public void run() {
