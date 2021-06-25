@@ -39,7 +39,6 @@ public class RedisSvMain {
 
 
     public static void main(String[] args) {
-
         new Thread(new Runnable() {
             public void run() {
                 try {
@@ -47,7 +46,6 @@ public class RedisSvMain {
                     System.out.println("Server TCP with port : " + 11000 + " is running...");
                     while (true) {
                         try {
-                            System.out.println("accept wait accept");
                             Socket clientSocket = serverSocket.accept();
                             System.out.println("client was accpeted ");
                             System.out.println(clientSocket.getInetAddress());
@@ -82,7 +80,6 @@ public class RedisSvMain {
                     System.out.println("Server TCP with port : " + 11001 + " is running...");
                     while (true) {
                         try {
-                            System.out.println("accept wait accept");
                             Socket clientSocket = serverSocket.accept();
                             System.out.println("client was accpeted ");
                             System.out.println(clientSocket.getInetAddress());
@@ -140,8 +137,8 @@ public class RedisSvMain {
                                 String [] arrData1 = data.split(",");
                                 String [] arrData2 = curr.data.split(",");
                                 if(arrData2[2].equals("Start")){
-                                    String key = arrData2[0]+"_"+arrData2[3]+"_"+arrData1[4]+"_"+arrData1[5];
-                                    String value = data +"_"+curr.data;
+                                    String key =  arrData2[3]+"_"+arrData1[4];
+                                    String value = data +","+curr.data;
                                     msgQueueRedis.addByKeyVlue(key,value);
                                     long currTime = System.currentTimeMillis();
                                     System.out.println("time execute : " + (currTime-startTime) +" ms");

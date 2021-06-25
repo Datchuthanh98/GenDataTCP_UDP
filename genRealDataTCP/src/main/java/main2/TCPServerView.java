@@ -21,7 +21,6 @@ public class TCPServerView {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
         }).start();
         
@@ -33,7 +32,6 @@ public class TCPServerView {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
         }).start();
     }
