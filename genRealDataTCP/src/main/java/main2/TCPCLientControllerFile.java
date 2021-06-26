@@ -72,10 +72,10 @@ public class TCPCLientControllerFile {
                 try {
                     while (true) {
                         if (option == 1) {
-                            ois.writeObject(data1);
+                            ois.writeObject(data1.trim());
                             ois.flush();
                         } else {
-                            ois.writeObject(data2);
+                            ois.writeObject(data2.trim());
                             ois.flush();
                         }
                         Thread.sleep(1000);

@@ -15,16 +15,16 @@ import java.util.Comparator;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /**
- *
  * @author dat.chuthanh
  */
 public class RedisSvMain {
 
     private static Node root = new Node();
     private static MsgQueueRedis msgQueueRedis = new MsgQueueRedis();
-    public static Integer numMatching= 0;
+    public static Integer numMatching = 0;
     public static long startTime = 0;
     public static long totalTimefor1kMess = 0;
+    public static int executeCount = 0;
     public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<String>(10000000, new Comparator<String>() {
         public int compare(String s1, String s2) {
             for (int i = 0; i < 14; i++) {
@@ -43,32 +43,23 @@ public class RedisSvMain {
                 try {
                     ServerSocket serverSocket = new ServerSocket(11000);
                     System.out.println("Server TCP with port : " + 11000 + " is running...");
-                    while (true) {
-                        try {
-                            Socket clientSocket = serverSocket.accept();
-                            System.out.println("client was accpeted ");
-                            System.out.println(clientSocket.getInetAddress());
-                            ObjectInputStream os = new ObjectInputStream(clientSocket.getInputStream());
-                                try {
-                                    while (true) {
-                                        try {
-                                            String data =  os.readObject().toString().trim();
-                                            String[] arrayData  = data.split("\n");
-                                            startTime = System.currentTimeMillis();
-                                            for(int i =0 ;i <arrayData.length;i++){
-                                                queue.add(arrayData[i]);
-                                            }
-                                        } catch (ClassNotFoundException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    Socket clientSocket = serverSocket.accept();
+                    System.out.println("client was accpeted ");
+                    System.out.println(clientSocket.getInetAddress());
+                    ObjectInputStream os = new ObjectInputStream(clientSocket.getInputStream());
+                    try {
+                        while (true) {
+                            String data = os.readObject().toString().trim();
+                            String[] arrayData = data.split("\n");
+
+                            for (int i = 0; i < arrayData.length; i++) {
+                                queue.add(arrayData[i]);
+                            }
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -80,26 +71,22 @@ public class RedisSvMain {
                 try {
                     ServerSocket serverSocket = new ServerSocket(11001);
                     System.out.println("Server TCP with port : " + 11001 + " is running...");
-                    while (true) {
-                        try {
-                            Socket clientSocket = serverSocket.accept();
-                            System.out.println("client was accpeted ");
-                            System.out.println(clientSocket.getInetAddress());
-                            ObjectInputStream os = new ObjectInputStream(clientSocket.getInputStream());
-                                try {
-                                        String data = os.readObject().toString().trim();
-                                        String[] arrayData  = data.split("\n");
-                                        startTime = System.currentTimeMillis();
-                                        for(int i =0 ;i <arrayData.length;i++){
-                                            queue.add(arrayData[i]);
-                                        }
-                                    } catch (ClassNotFoundException e) {
-                                        e.printStackTrace();
-                                    }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    Socket clientSocket = serverSocket.accept();
+                    System.out.println("client was accpeted ");
+                    System.out.println(clientSocket.getInetAddress());
+                    ObjectInputStream os = new ObjectInputStream(clientSocket.getInputStream());
+                    try {
+                        while (true) {
+                            String data = os.readObject().toString().trim();
+                            String[] arrayData = data.split("\n");
+                            for (int i = 0; i < arrayData.length; i++) {
+                                queue.add(arrayData[i]);
+                            }
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -108,13 +95,9 @@ public class RedisSvMain {
 
         new Thread(new Runnable() {
             public void run() {
-                boolean match = false;
                 try {
+                    startTime = System.currentTimeMillis();
                     while (true) {
-                        if(match == true){
-                            match = false;
-                            startTime = System.currentTimeMillis();
-                        }
                         String data = queue.poll();
                         if (data == null) continue;
                         if (data.startsWith("NVL01")) {
@@ -129,21 +112,18 @@ public class RedisSvMain {
                             }
                             if (curr.data != null) {
                                 // FOUND PHONE NUMBER MATCHING AND INSERT TO DATABASE
-                                String [] arrData1 = data.split(",");
-                                String [] arrData2 = curr.data.split(",");
-                                if(arrData2[2].equals("Start")){
-                                    String key =  arrData2[3]+"_"+arrData1[4];
-                                    String value = data +","+curr.data;
-                                    msgQueueRedis.addByKeyVlue(key,value);
-                                    long currTime = System.currentTimeMillis();
-                                    long timeExe = currTime-startTime;
-                                     totalTimefor1kMess += timeExe;
-                                    match = true;
+                                String[] arrData1 = data.split(",");
+                                String[] arrData2 = curr.data.split(",");
+                                if (arrData2[2].equals("Start")) {
+                                    String key = arrData2[3] + "_" + arrData1[4];
+                                    String value = data + "," + curr.data;
+                                    msgQueueRedis.addByKeyVlue(key, value);
                                     numMatching++;
-                                    System.out.println("time execute for 1k messs: " + (totalTimefor1kMess) +" ms");
-                                    System.out.println("numMatching " + numMatching);
                                 }
+                            } else {
+//                                System.out.println("ko match");
                             }
+
                         } else {
                             Node curr = root;
                             String[] dataArr = data.split(",");
@@ -156,6 +136,19 @@ public class RedisSvMain {
                             }
                             curr.data = data;
                         }
+                        //execute count
+                        executeCount++;
+                        if (executeCount == 1000) {
+                            long currTime = System.currentTimeMillis();
+                            long timeExe = currTime - startTime;
+                            System.out.println("time execute 1000 data : " + timeExe + "ms");
+                            System.out.println("numMatching " + numMatching);
+                            System.out.println("--------------------------------------------");
+                            numMatching = 0;
+                            executeCount = 0;
+                            startTime = System.currentTimeMillis();
+                        }
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
