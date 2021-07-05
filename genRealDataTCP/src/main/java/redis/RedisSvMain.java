@@ -41,55 +41,59 @@ public class RedisSvMain {
     public static void main(String[] args) {
         new Thread(new Runnable() {
             public void run() {
-                try {
-                    ServerSocket serverSocket = new ServerSocket(11000);
-                    System.out.println("Server TCP with port : " + 11000 + " is running...");
-                    Socket clientSocket = serverSocket.accept();
-                    System.out.println("client was accpeted ");
-                    System.out.println(clientSocket.getInetAddress());
-                    ObjectInputStream os = new ObjectInputStream(clientSocket.getInputStream());
+                while (true) {
                     try {
-                        while (true) {
-                            String data = os.readObject().toString().trim();
-                            String[] arrayData = data.split("\n");
+                        ServerSocket serverSocket = new ServerSocket(11000);
+                        System.out.println("Server TCP with port : " + 11000 + " is running...");
+                        Socket clientSocket = serverSocket.accept();
+                        System.out.println("client was accpeted ");
+                        System.out.println(clientSocket.getInetAddress());
+                        ObjectInputStream os = new ObjectInputStream(clientSocket.getInputStream());
+                        try {
+                            while (true) {
+                                String data = os.readObject().toString().trim();
+                                String[] arrayData = data.split("\n");
 
-                            for (int i = 0; i < arrayData.length; i++) {
-                                queue.add(arrayData[i]);
+                                for (int i = 0; i < arrayData.length; i++) {
+                                    queue.add(arrayData[i]);
+                                }
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
+
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         }).start();
 
         new Thread(new Runnable() {
             public void run() {
-                try {
-                    ServerSocket serverSocket = new ServerSocket(11001);
-                    System.out.println("Server TCP with port : " + 11001 + " is running...");
-                    Socket clientSocket = serverSocket.accept();
-                    System.out.println("client was accpeted ");
-                    System.out.println(clientSocket.getInetAddress());
-                    ObjectInputStream os = new ObjectInputStream(clientSocket.getInputStream());
+                while (true) {
                     try {
-                        while (true) {
-                            String data = os.readObject().toString().trim();
-                            String[] arrayData = data.split("\n");
-                            for (int i = 0; i < arrayData.length; i++) {
-                                queue.add(arrayData[i]);
+                        ServerSocket serverSocket = new ServerSocket(11001);
+                        System.out.println("Server TCP with port : " + 11001 + " is running...");
+                        Socket clientSocket = serverSocket.accept();
+                        System.out.println("client was accpeted ");
+                        System.out.println(clientSocket.getInetAddress());
+                        ObjectInputStream os = new ObjectInputStream(clientSocket.getInputStream());
+                        try {
+                            while (true) {
+                                String data = os.readObject().toString().trim();
+                                String[] arrayData = data.split("\n");
+                                for (int i = 0; i < arrayData.length; i++) {
+                                    queue.add(arrayData[i]);
+                                }
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
+
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         }).start();
