@@ -40,6 +40,7 @@ public class TCPCLientControllerFile {
                     String data = myReader.nextLine();
                     data1 = data1 +data +"\n";
                 }
+                data1 = data1.trim();
                 myReader.close();
             } catch (FileNotFoundException e) {
                 System.out.println("An error occurred.");
@@ -53,6 +54,7 @@ public class TCPCLientControllerFile {
                     String data = myReader.nextLine();
                     data2 = data2 +data +"\n";
                 }
+                data2=data2.trim();
                 myReader.close();
             } catch (FileNotFoundException e) {
                 System.out.println("An error occurred.");
@@ -73,9 +75,11 @@ public class TCPCLientControllerFile {
                     while (true) {
                         if (option == 1) {
                             ois.writeObject(data1.trim());
+                            System.out.printf(data1.trim());
                             ois.flush();
                         } else {
                             ois.writeObject(data2.trim());
+                            System.out.printf(data2.trim());
                             ois.flush();
                         }
                         Thread.sleep(1000);

@@ -11,22 +11,24 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author dat.chuthanh
  */
 public class RedisSvMain {
-
-    private static Node root = new Node();
+    private static HashMap<String, String> map = new HashMap<String, String>();
+//    private static Node root = new Node();
     private static MsgQueueRedis msgQueueRedis = new MsgQueueRedis();
     public static Integer numMatching = 0;
     public static long startTime = 0;
-    public static long totalTimefor1kMess = 0;
     public static int executeCount = 0;
     public static long timeWait = 0;
-    public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<String>(10000000, new Comparator<String>() {
+    public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<String>(10000, new Comparator<String>() {
         public int compare(String s1, String s2) {
             for (int i = 0; i < 14; i++) {
                 if (s1.charAt(i) < s2.charAt(i + 8)) return -1;
@@ -53,10 +55,7 @@ public class RedisSvMain {
                             while (true) {
                                 String data = os.readObject().toString().trim();
                                 String[] arrayData = data.split("\n");
-
-                                for (int i = 0; i < arrayData.length; i++) {
-                                    queue.add(arrayData[i]);
-                                }
+                                queue.addAll(Arrays.asList(arrayData));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -83,9 +82,7 @@ public class RedisSvMain {
                             while (true) {
                                 String data = os.readObject().toString().trim();
                                 String[] arrayData = data.split("\n");
-                                for (int i = 0; i < arrayData.length; i++) {
-                                    queue.add(arrayData[i]);
-                                }
+                                queue.addAll(Arrays.asList(arrayData));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -103,58 +100,33 @@ public class RedisSvMain {
                 try {
                     startTime = System.currentTimeMillis();
                     while (true) {
-                        String data = queue.poll();
-                        if (data == null) continue;
+                        String data = queue.take();
                         if (data.startsWith("NVL01")) {
-                            Node curr = root;
                             String[] dataArr = data.split(",");
-                            String privateIp = dataArr[2];
-                            String[] ipArr = privateIp.split("\\.");
-                            for (int i = 0; i < 4; i++) {
-                                int tmp = Integer.parseInt(ipArr[i]);
-                                if (curr.next[tmp] == null) break;
-                                curr = curr.next[tmp];
-                            }
-                            if (curr.data != null) {
-                                // FOUND PHONE NUMBER MATCHING AND INSERT TO DATABASE
+                            String privateIp = dataArr[2].trim();
+
+                            if (map.get(privateIp) != null){
                                 String[] arrData1 = data.split(",");
-                                String[] arrData2 = curr.data.split(",");
-                                if (arrData2[2].equals("Start")) {
+                                String[] arrData2 = map.get(privateIp).split(",");
                                     String key = arrData2[3] + "_" + arrData1[4];
-                                    String value = data + "," + curr.data;
+                                    String value = data + "," + map.get(privateIp);
                                     msgQueueRedis.addByKeyVlue(key, value);
                                     numMatching++;
-                                }
-                            } else {
-//                                System.out.println("ko match");
                             }
-
                         } else {
-                            Node curr = root;
                             String[] dataArr = data.split(",");
-                            String ip = dataArr[4];
-                            String[] ipArr = ip.split("\\.");
-                            for (int i = 0; i < 4; i++) {
-                                int tmp = Integer.parseInt(ipArr[i]);
-                                if (curr.next[tmp] == null) curr.next[tmp] = new Node();
-                                curr = curr.next[tmp];
-                            }
-                            curr.data = data;
+                            String ip = dataArr[4].trim();
+                            if (dataArr[2].equals("Start")) map.put(ip, data);
                         }
                         //execute count
                         executeCount++;
-                        if (executeCount == 1000) {
+                        if (executeCount == 2000) {
                             long currTime = System.currentTimeMillis();
                             long timeExe = currTime - startTime;
 
-                            if(numMatching > 0){
                                 System.out.println("time execute 1000 data : " + (timeExe+timeWait) + "ms");
                                 System.out.println("numMatching " + numMatching);
                                 System.out.println("--------------------------------------------");
-                                timeWait = 0;
-                            }else{
-                                timeWait = timeExe;
-                            }
 
                             numMatching = 0;
                             executeCount = 0;
@@ -169,8 +141,9 @@ public class RedisSvMain {
         }).start();
     }
 
-    static class Node {
-        String data;
-        Node[] next = new Node[256];
-    }
+//    static class Node {
+//        String data;
+//        Node[] next = new Node[256];
+//    }
 }
+
