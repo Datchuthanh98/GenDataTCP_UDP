@@ -29,16 +29,29 @@ public class RedisSvMain {
     public static int executeCount = 0;
     public static long timeWait = 0;
 
-    public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<String>(10000, new Comparator<String>() {
-        public int compare(String s1, String s2) {
-            for (int i = 0; i < 14; i++) {
-                if (s1.charAt(i) < s2.charAt(i + 8)) return -1;
-                else if (s1.charAt(i) > s2.charAt(i + 8)) return 1;
-            }
-            if (s1.startsWith("NVL01_1")) return 1;
-            else if (s2.startsWith("NVL01_1")) return -1;
-            return 0;
+//    public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<String>(10000, new Comparator<String>() {
+//        public int compare(String s1, String s2) {
+//            for (int i = 0; i < 14; i++) {
+//                if (s1.charAt(i) < s2.charAt(i + 8)) return -1;
+//                else if (s1.charAt(i) > s2.charAt(i + 8)) return 1;
+//            }
+//            if (s1.startsWith("NVL01_1")) return 1;
+//            else if (s2.startsWith("NVL01_1")) return -1;
+//            return 0;
+//        }
+//    });
+
+    public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<String>(100000, (s1, s2) -> {
+        int s1TimeIdx = 0, s2TimeIdx = 0;
+        if (s1.startsWith("NVL01_1")) s1TimeIdx = 8;
+        if (s2.startsWith("NVL01_1")) s2TimeIdx = 8;
+        for (int i = 0; i < 14; i++) {
+            if (s1.charAt(i + s1TimeIdx) < s2.charAt(i + s2TimeIdx)) return -1;
+            else if (s1.charAt(i + s1TimeIdx) > s2.charAt(i + s2TimeIdx)) return 1;
         }
+        if (s1.startsWith("NVL01_1")) return 1;
+        else if (s2.startsWith("NVL01_1")) return -1;
+        return 0;
     });
 
     public static void main(String[] args) {
