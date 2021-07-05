@@ -19,7 +19,7 @@ import java.util.Scanner;
 
 public class TCPCLientControllerAuto {
     private Socket socket;
-    private PrintWriter ois;
+    private ObjectOutputStream ois;
     private String data1="";
     private String data2="";
     public Boolean ipPr1 = false;
@@ -31,60 +31,13 @@ public class TCPCLientControllerAuto {
             socket = new Socket(IP, port);
             System.out.println("Socket: "+IP.getHostAddress()+":"+port);
 
-//            try {
-//                File myObj = new File("data1_" + msg + ".txt");
-//                Scanner myReader = new Scanner(myObj);
-//                while (myReader.hasNextLine()) {
-//                    String data = myReader.nextLine();
-//                    data1 = data1 +data +"\n";
-//                }
-//                myReader.close();
-//            } catch (FileNotFoundException e) {
-//                System.out.println("An error occurred.");
-//                e.printStackTrace();
-//            }
-
-
-//            try {
-//                File myObj = new File("data2_" + msg + ".txt");
-//                Scanner myReader = new Scanner(myObj);
-//                while (myReader.hasNextLine()) {
-//                    String data = myReader.nextLine();
-//                    data2 = data2 +data +"\n";
-//                }
-//                myReader.close();
-//            } catch (FileNotFoundException e) {
-//                System.out.println("An error occurred.");
-//                e.printStackTrace();
-//            }
-
             getStream(option,msg);
         }catch(Exception e){
             e.printStackTrace();
         }
     }
     public void getStream(final int option , final int msg) throws IOException {
-        ois = new PrintWriter(new PrintWriter(socket.getOutputStream()));
-
-
-//        new Thread(new Runnable() {
-//            public void run() {
-//                try {
-//                    while (true) {
-//                        if(ipPr1 == true && ipPr2 == true){
-//                            System.out.println("aloooooooooooooooooooos");
-//                            resetIpPrivateMatching();
-//                            ipPr1 = false;
-//                            ipPr2 = false;
-//                        }
-//
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-
+        ois = new ObjectOutputStream(socket.getOutputStream());
         new Thread(new Runnable() {
             public void run() {
                 try {
@@ -93,18 +46,27 @@ public class TCPCLientControllerAuto {
                             String data1="";
                             String data2 ="";
                             //msg = 5000
+
+                            Random rand = new Random();
+                            String ipPrivateMatching = "10.11.12.13";
                             for(int i =0 ;i< msg;i++){
-                                String ipPrivateMatching = "10.11.12.13";
-                                data1 += genDataMatchFile1( ipPrivateMatching)+"\n";
-                                data2 += genDataMatchFile2(ipPrivateMatching)+"\n";
+
+                                int a = rand.nextInt(2);
+                                if(a == 1){
+                                    data1 += genDataMatchFile1( ipPrivateMatching)+"\n";
+                                    data2 += genDataMatchFile2(ipPrivateMatching)+"\n";
+                                }else{
+                                    data1 += genDataFakeFile1()+"\n";
+                                    data2 += genDataFakeFile2()+"\n";
+                                }
                             }
                         if (option == 1) {
 //                            System.out.println(data1);
-                            ois.write(data1);
+                            ois.writeObject(data1.trim());
                             ois.flush();
                         } else {
 //                            System.out.println(data2);
-                            ois.write(data2);
+                            ois.writeObject(data2.trim());
                             ois.flush();
                         }
                         Thread.sleep(10000);

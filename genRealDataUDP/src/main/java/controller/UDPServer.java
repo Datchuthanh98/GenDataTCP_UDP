@@ -17,10 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-/**
- *
- * @author Ryan
- */
+
 public class UDPServer {
     DatagramSocket server = null;
     int port = 1001;

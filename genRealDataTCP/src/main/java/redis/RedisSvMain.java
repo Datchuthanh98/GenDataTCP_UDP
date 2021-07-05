@@ -25,6 +25,7 @@ public class RedisSvMain {
     public static long startTime = 0;
     public static long totalTimefor1kMess = 0;
     public static int executeCount = 0;
+    public static long timeWait = 0;
     public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<String>(10000000, new Comparator<String>() {
         public int compare(String s1, String s2) {
             for (int i = 0; i < 14; i++) {
@@ -141,9 +142,16 @@ public class RedisSvMain {
                         if (executeCount == 1000) {
                             long currTime = System.currentTimeMillis();
                             long timeExe = currTime - startTime;
-                            System.out.println("time execute 1000 data : " + timeExe + "ms");
-                            System.out.println("numMatching " + numMatching);
-                            System.out.println("--------------------------------------------");
+
+                            if(numMatching > 0){
+                                System.out.println("time execute 1000 data : " + (timeExe+timeWait) + "ms");
+                                System.out.println("numMatching " + numMatching);
+                                System.out.println("--------------------------------------------");
+                                timeWait = 0;
+                            }else{
+                                timeWait = timeExe;
+                            }
+
                             numMatching = 0;
                             executeCount = 0;
                             startTime = System.currentTimeMillis();

@@ -39,19 +39,21 @@ public class TCPServerController {
                 System.out.println("client was accpeted ");
                 System.out.println(clientSocket.getInetAddress());
                  os = new ObjectInputStream(clientSocket.getInputStream());
-                new Thread(() -> {
-                    try {
-                        while (true) {
-                            String data = (String) os.readObject();
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            while (true) {
+                                String data = (String) os.readObject();
 //                            System.out.println(os.readObject());
-                            System.out.println("----------------------------------------------");
-                            System.out.println(data);
-                            String[] array =data.split("\n");
+                                System.out.println("----------------------------------------------");
+                                System.out.println(data);
+                                String[] array = data.split("\n");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
                     }
                 }).start();
             } catch (Exception e) {
