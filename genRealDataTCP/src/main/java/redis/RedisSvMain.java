@@ -21,13 +21,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author dat.chuthanh
  */
 public class RedisSvMain {
+    public static Integer doubleLineData = 10000;
     private static HashMap<String, String> map = new HashMap<String, String>();
-//    private static Node root = new Node();
     private static MsgQueueRedis msgQueueRedis = new MsgQueueRedis();
     public static Integer numMatching = 0;
     public static long startTime = 0;
     public static int executeCount = 0;
     public static long timeWait = 0;
+
     public static PriorityBlockingQueue<String> queue = new PriorityBlockingQueue<String>(10000, new Comparator<String>() {
         public int compare(String s1, String s2) {
             for (int i = 0; i < 14; i++) {
@@ -120,7 +121,7 @@ public class RedisSvMain {
                         }
                         //execute count
                         executeCount++;
-                        if (executeCount == 2000) {
+                        if (executeCount == doubleLineData) {
                             long currTime = System.currentTimeMillis();
                             long timeExe = currTime - startTime;
 
@@ -141,9 +142,5 @@ public class RedisSvMain {
         }).start();
     }
 
-//    static class Node {
-//        String data;
-//        Node[] next = new Node[256];
-//    }
 }
 

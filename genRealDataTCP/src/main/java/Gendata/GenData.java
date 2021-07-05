@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.Random;
 
 public class GenData {
-
+  public static Integer numberData = 10000;
 
     public static String ipPrivateMatching = "10.100.14.16";
     public static void resetIpPrivateMatching() {
@@ -36,15 +36,15 @@ public class GenData {
 
 
         try {
-            final FileWriter myWriterData1 = new FileWriter("data1_1000.txt");
-            final FileWriter myWriterData2 = new FileWriter("data2_1000.txt");
+            final FileWriter myWriterData1 = new FileWriter("data1_"+numberData+".txt");
+            final FileWriter myWriterData2 = new FileWriter("data2_"+numberData+".txt");
 
             new Thread(new Runnable() {
                 public void run() {
                     int i = 1 ;
                     Random rn = new Random();
                     try {
-                        while (i <=1000) {
+                        while (i <=numberData) {
                             if(rn.nextInt(3) == 2){
                                 myWriterData1.append(genDataMatchFile1()+"\n");
                                 myWriterData2.append(genDataMatchFile2()+"\n");
