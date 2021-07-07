@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.Model;
 
 import org.springframework.lang.NonNull;
 
