@@ -2,7 +2,7 @@ package com.example.demo.Model;
 
 import org.springframework.lang.NonNull;
 
-public class RequestModel {
+public class RequestModelv1 {
     private String  msisdn;
     private String  address;
     private String  port;
@@ -10,7 +10,7 @@ public class RequestModel {
 
 
 
-    public RequestModel(String msisdn, String address, String port) {
+    public RequestModelv1(String msisdn, String address, String port) {
         this.msisdn = msisdn;
         this.address = address;
         this.port = port;

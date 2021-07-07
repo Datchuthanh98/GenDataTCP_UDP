@@ -122,7 +122,7 @@ public class RedisSvMain {
                                         // tìm thấy match
                                         String[] arrData_1 = d.split(",");
                                         String[] arrData_2 = data.split(",");
-                                         String key = arrData_1[3] + "_" + arrData_2[4];
+                                        String key = arrData_1[3] + "_" + arrData_2[4]+"_"+arrData_2[5]+"_"+arrData_2[6];
                                          String value = data + "," + d;
                                             msgQueueRedis.addByKeyVlue(key, value);
                                         numMatching++;
@@ -147,7 +147,7 @@ public class RedisSvMain {
                                             // tìm thấy match
                                             String[] arrData_2= d.split(",");
                                             String[] arrData_1 = data.split(",");
-                                            String key = arrData_1[3] + "_" + arrData_2[4];
+                                            String key = arrData_1[3] + "_" + arrData_2[4]+"_"+arrData_2[5]+"_"+arrData_2[6];
                                             String value = data + "," + d;
                                             msgQueueRedis.addByKeyVlue(key, value);
                                             numMatching++;

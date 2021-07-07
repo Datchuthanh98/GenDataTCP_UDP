@@ -2,8 +2,8 @@ package com.example.demo.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-//@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResponeNotMatch {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ResponeNotMatchv2 {
     String status;
     String time;
     String data;
@@ -31,7 +31,7 @@ public class ResponeNotMatch {
 //        this.data = data;
 //    }
 
-    public ResponeNotMatch(){
+    public ResponeNotMatchv2(){
 
     }
 

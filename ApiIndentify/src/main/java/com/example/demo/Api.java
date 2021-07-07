@@ -1,8 +1,6 @@
 package com.example.demo;
 
-import com.example.demo.Model.RequestModel;
-import com.example.demo.Model.ResponeNotMatch;
-import com.example.demo.Model.ResponeOK;
+import com.example.demo.Model.*;
 import com.example.demo.redis.MsgQueueRedis;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -20,34 +18,38 @@ public class Api {
 
     @PostMapping("/v1/identification")
     @ResponseBody
-    public ResponseEntity<?> postResultV1(@RequestBody RequestModel requestModel){
+    public ResponseEntity<?> postResultV1(@RequestBody RequestModelv1 requestModelv1){
         connectDB = true;
 //        if(!connectDB){
-//            ResponeOK responeModel = new ResponeOK();
+//            ResponeNotMatchv1 responeModel = new ResponeNotMatchv1();
 //            responeModel.setStatus("ERROR");
 //            responeModel.setMessgage("error connect to database");
 //            return ResponseEntity.ok(responeModel);
 //        }
 
-     if(requestModel.getMsisdn() == null){
+        System.out.println("ahihi");
+        msgQueueRedis.searhcKey("abc");
+     if(requestModelv1.getMsisdn() == null){
          return ResponseEntity.ok("Empty body sent in response.");
      }
 
-     String phone = requestModel.getMsisdn();
-     String address = requestModel.getAddress();
-     String port = requestModel.getPort();
+     String phone = requestModelv1.getMsisdn();
+     String address = requestModelv1.getAddress();
+     String port = requestModelv1.getPort();
 
      String key = phone+"_"+address;
-     String value = msgQueueRedis.getByKeyValue(key);
+        System.out.println("key: "+key);
+     String value = msgQueueRedis.searhcKey(key);
+        System.out.println("value: "+value);
       if(value == null){
-          ResponeNotMatch responeModel = new ResponeNotMatch();
+          ResponeNotMatchv1 responeModel = new ResponeNotMatchv1();
           responeModel.setStatus("NOT_MATCHED");
           responeModel.setData(null);
           return ResponseEntity.ok(responeModel);
       }else{
           System.out.println("uchiha comehere");
           String[] dataItem = value.split(",");
-          ResponeOK responeModel = new ResponeOK();
+          ResponeOKv1 responeModel = new ResponeOKv1();
           responeModel.setStatus("OK");
           responeModel.setTime(dataItem[1]);
           responeModel.setData(null);
@@ -58,7 +60,7 @@ public class Api {
 
     @PostMapping("/v2/identification")
     @ResponseBody
-    public ResponseEntity<?> postResultV2(@RequestBody RequestModel requestModel){
+    public ResponseEntity<?> postResultV2(@RequestBody RequestModelv2 requestModelv2){
         connectDB = true;
 //        if(!connectDB){
 //            ResponeOK responeModel = new ResponeOK();
@@ -67,28 +69,30 @@ public class Api {
 //            return ResponseEntity.ok(responeModel);
 //        }
 
-        if(requestModel.getMsisdn() == null){
+        if(requestModelv2.getDestination_address() == null){
             return ResponseEntity.ok("Empty body sent in response.");
         }
 
-        String phone = requestModel.getMsisdn();
-        String address = requestModel.getAddress();
-        String port = requestModel.getPort();
+        String sub_ip_address = requestModelv2.getSub_ip_address();
+        String sub_ip_port = requestModelv2.getSub_ip_port();
+        String destination_address = requestModelv2.getDestination_address();
 
-        String key = phone+"_"+address;
-        String value = msgQueueRedis.getByKeyValue(key);
+        String key = sub_ip_address+"_"+sub_ip_port;
+//        if(destination_address != null){
+//            key = key+"_"+sub_ip_address;
+//        }
+        String value = msgQueueRedis.searhcKey(key);
+
         if(value == null){
-            ResponeNotMatch responeModel = new ResponeNotMatch();
+            ResponeNotMatchv2 responeModel = new ResponeNotMatchv2();
             responeModel.setStatus("NOT_MATCHED");
             responeModel.setData(null);
             return ResponseEntity.ok(responeModel);
         }else{
-            System.out.println("uchiha comehere");
             String[] dataItem = value.split(",");
-            ResponeOK responeModel = new ResponeOK();
+            ResponeOKv2 responeModel = new ResponeOKv2();
             responeModel.setStatus("OK");
-            responeModel.setTime(dataItem[1]);
-            responeModel.setData(null);
+            responeModel.setMSISDN(dataItem[11]);
             return ResponseEntity.ok(responeModel);
         }
     }

@@ -1,9 +1,7 @@
 package com.example.demo.Model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 //@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResponeOK {
+public class ResponeOKv1 {
     String status;
     String time;
     String data;
@@ -25,7 +23,7 @@ public class ResponeOK {
 //        this.data = data;
 //    }
 
-    public ResponeOK(){
+    public ResponeOKv1(){
 
     }
 

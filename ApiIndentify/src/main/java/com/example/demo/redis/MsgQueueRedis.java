@@ -1,8 +1,11 @@
 package com.example.demo.redis;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 import java.util.Calendar;
+import java.util.Set;
 
 
 public class MsgQueueRedis
@@ -73,6 +76,25 @@ public class MsgQueueRedis
         catch (Exception e) {
             e.printStackTrace();
             return "";
+        }
+    }
+
+    public String searhcKey(final String key) {
+        try {
+            System.out.println("keyyyyyy: "+key);
+            Set<String> names=jedis.keys("*"+key+"*");
+            System.out.println("names"+ names.toString());
+            if(names!= null){
+                String data = jedis.get((String) names.toArray()[0]);
+                System.out.println("data "+ data);
+                return  data;
+
+            }
+            return null;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
     
