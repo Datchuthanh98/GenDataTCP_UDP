@@ -54,26 +54,29 @@ public class TCPCLientControllerFile {
         }
     }
 
-    public void start(InetAddress IP, int port, int option) throws IOException {
+    public void start(InetAddress IP, int port, final int option) throws IOException {
         System.out.println("Clien TCP with"+port+ "is running");
         socket = new Socket(IP, port);
         System.out.println("Socket: "+IP.getHostAddress()+":"+port);
 
         ois = new ObjectOutputStream(socket.getOutputStream());
 
-        new Thread(() -> {
-            try {
-                while (true) {
-                    if (option == 1) {
-                        ois.writeObject(data1.toString().trim());
-                    } else {
-                        ois.writeObject(data2.toString().trim());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (true) {
+                        if (option == 1) {
+                            ois.writeObject(data1.toString().trim());
+                        } else {
+                            ois.writeObject(data2.toString().trim());
+                        }
+                        ois.flush();
+                        Thread.sleep(1000);
                     }
-                    ois.flush();
-                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }).start();
     }
